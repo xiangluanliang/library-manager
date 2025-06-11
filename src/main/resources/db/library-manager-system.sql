@@ -157,7 +157,7 @@ CREATE TABLE `user` (
 -- Records of user
 -- ----------------------------
 INSERT INTO `user` VALUES ('1', 'user1', '123456', '501455447@qq.com');
-INSERT INTO `user` VALUES ('2', 'zbw', '123456', '501455447@qq.com');
+INSERT INTO `user` VALUES ('2', 'guo', '123456', '501455447@qq.com');
 INSERT INTO `user` VALUES ('5', 'user2', '123456', '501455447@qq.com');
 INSERT INTO `user` VALUES ('6', 'LeBronJames', '123456', '501455447@qq.com');
 INSERT INTO `user` VALUES ('7', '科比', '123456', '501455447@qq.com');

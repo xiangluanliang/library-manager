@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.zbw.mapper.BookMapper">
-    <resultMap id="BaseResultMap" type="com.zbw.domain.Book">
+<mapper namespace="com.guo.mapper.BookMapper">
+    <resultMap id="BaseResultMap" type="com.guo.domain.Book">
         <id column="book_id" jdbcType="INTEGER" property="bookId"/>
         <result column="book_name" jdbcType="VARCHAR" property="bookName"/>
         <result column="book_author" jdbcType="VARCHAR" property="bookAuthor"/>
@@ -74,7 +74,7 @@
         book_id, book_name, book_author, book_publish, book_category, book_price, book_introduction
     </sql>
 
-    <select id="selectByExample" parameterType="com.zbw.domain.BookExample" resultMap="BaseResultMap">
+    <select id="selectByExample" parameterType="com.guo.domain.BookExample" resultMap="BaseResultMap">
         select
         <if test="distinct">
             distinct
@@ -111,14 +111,14 @@
         where book_id = #{bookId,jdbcType=INTEGER}
     </delete>
 
-    <delete id="deleteByExample" parameterType="com.zbw.domain.BookExample">
+    <delete id="deleteByExample" parameterType="com.guo.domain.BookExample">
         delete from book
         <if test="_parameter != null">
             <include refid="Example_Where_Clause"/>
         </if>
     </delete>
 
-    <insert id="insert" parameterType="com.zbw.domain.Book">
+    <insert id="insert" parameterType="com.guo.domain.Book">
         insert into book (book_id, book_name, book_author,
                           book_publish, book_category, book_price,
                           book_introduction)
@@ -127,7 +127,7 @@
                 #{bookIntroduction,jdbcType=VARCHAR})
     </insert>
 
-    <insert id="insertSelective" parameterType="com.zbw.domain.Book">
+    <insert id="insertSelective" parameterType="com.guo.domain.Book">
         insert into book
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="bookId != null">
@@ -176,7 +176,7 @@
             </if>
         </trim>
     </insert>
-    <select id="countByExample" parameterType="com.zbw.domain.BookExample" resultType="java.lang.Long">
+    <select id="countByExample" parameterType="com.guo.domain.BookExample" resultType="java.lang.Long">
         select count(*) from book
         <if test="_parameter != null">
             <include refid="Example_Where_Clause"/>
@@ -224,7 +224,7 @@
             <include refid="Update_By_Example_Where_Clause"/>
         </if>
     </update>
-    <update id="updateByPrimaryKeySelective" parameterType="com.zbw.domain.Book">
+    <update id="updateByPrimaryKeySelective" parameterType="com.guo.domain.Book">
         update book
         <set>
             <if test="bookName != null">
@@ -248,7 +248,7 @@
         </set>
         where book_id = #{bookId,jdbcType=INTEGER}
     </update>
-    <update id="updateByPrimaryKey" parameterType="com.zbw.domain.Book">
+    <update id="updateByPrimaryKey" parameterType="com.guo.domain.Book">
         update book
         set book_name         = #{bookName,jdbcType=VARCHAR},
             book_author       = #{bookAuthor,jdbcType=VARCHAR},

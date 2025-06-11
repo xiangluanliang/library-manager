@@ -1,6 +1,6 @@
 mybatis:
   mapper-locations: classpath:mapper/*.xml
-  type-aliases-package: com.zbw.domain
+  type-aliases-package: com.guo.domain
 
 # 默认是8080端口 , 配置为80端口在浏览器访问时不需要输入端口号
 server:

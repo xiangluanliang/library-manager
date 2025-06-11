@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.zbw.mapper.AdminMapper">
-    <resultMap id="BaseResultMap" type="com.zbw.domain.Admin">
+<mapper namespace="com.guo.mapper.AdminMapper">
+    <resultMap id="BaseResultMap" type="com.guo.domain.Admin">
         <id column="admin_id" jdbcType="INTEGER" property="adminId"/>
         <result column="admin_name" jdbcType="VARCHAR" property="adminName"/>
         <result column="admin_pwd" jdbcType="VARCHAR" property="adminPwd"/>
@@ -71,7 +71,7 @@
         admin_id, admin_name, admin_pwd, admin_email
     </sql>
     
-    <select id="selectByExample" parameterType="com.zbw.domain.AdminExample" resultMap="BaseResultMap">
+    <select id="selectByExample" parameterType="com.guo.domain.AdminExample" resultMap="BaseResultMap">
         select
         <if test="distinct">
             distinct
@@ -98,19 +98,19 @@
         from admin
         where admin_id = #{adminId,jdbcType=INTEGER}
     </delete>
-    <delete id="deleteByExample" parameterType="com.zbw.domain.AdminExample">
+    <delete id="deleteByExample" parameterType="com.guo.domain.AdminExample">
         delete from admin
         <if test="_parameter != null">
             <include refid="Example_Where_Clause"/>
         </if>
     </delete>
-    <insert id="insert" parameterType="com.zbw.domain.Admin">
+    <insert id="insert" parameterType="com.guo.domain.Admin">
         insert into admin (admin_id, admin_name, admin_pwd,
                              admin_email)
         values (#{adminId,jdbcType=INTEGER}, #{adminName,jdbcType=VARCHAR}, #{adminPwd,jdbcType=VARCHAR},
                 #{adminEmail,jdbcType=VARCHAR})
     </insert>
-    <insert id="insertSelective" parameterType="com.zbw.domain.Admin">
+    <insert id="insertSelective" parameterType="com.guo.domain.Admin">
         insert into admin
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="adminId != null">
@@ -141,7 +141,7 @@
             </if>
         </trim>
     </insert>
-    <select id="countByExample" parameterType="com.zbw.domain.AdminExample" resultType="java.lang.Long">
+    <select id="countByExample" parameterType="com.guo.domain.AdminExample" resultType="java.lang.Long">
         select count(*) from admin
         <if test="_parameter != null">
             <include refid="Example_Where_Clause"/>
@@ -178,7 +178,7 @@
         </if>
     </update>
     
-    <update id="updateByPrimaryKeySelective" parameterType="com.zbw.domain.Admin">
+    <update id="updateByPrimaryKeySelective" parameterType="com.guo.domain.Admin">
         update admin
         <set>
             <if test="adminName != null">
@@ -194,7 +194,7 @@
         where admin_id = #{adminId,jdbcType=INTEGER}
     </update>
     
-    <update id="updateByPrimaryKey" parameterType="com.zbw.domain.Admin">
+    <update id="updateByPrimaryKey" parameterType="com.guo.domain.Admin">
         update admin
         set admin_name  = #{adminName,jdbcType=VARCHAR},
             admin_pwd   = #{adminPwd,jdbcType=VARCHAR},
