@@ -20,11 +20,3 @@ spring:
   resources:
     chain:
       cache: true
-logging:
-  level:
-    # 为了避免信息过载，根日志级别保持INFO
-    root: INFO
-    # 将Spring Boot的日志级别设为DEBUG，以获取详细的条件报告
-    org.springframework.boot: DEBUG
-    # 将你自己项目的日志级别也设为DEBUG
-    com.guo: DEBUG

@@ -32,20 +32,36 @@ public class UserServiceImpl implements IUserService {
      */
     @Override
     public User login(String username, String password) {
-        // 1. 调用我们自定义的findByUsername方法，直接获取唯一的用户对象
+        // --- ↓↓↓ 新增日志 ↓↓↓ ---
+        System.out.println("=============================================");
+        System.out.println("【日志】尝试登录，用户名: " + username);
+        System.out.println("【日志】输入的密码: " + password);
+
+        // 1. 根据用户名从数据库查找用户
         User userFromDb = userMapper.findByUsername(username);
+
+        // --- ↓↓↓ 新增日志，这是回答你问题的关键！ ↓↓↓ ---
+        System.out.println("【日志】从数据库查询到的用户对象: " + userFromDb);
 
         // 2. 检查用户是否存在
         if (userFromDb == null) {
-            // 用户名不存在，直接返回null
-            return null;
+            System.out.println("【日志】登录失败：用户名不存在。");
+            System.out.println("=============================================");
+            return null; // 用户名不存在
         }
 
-        // 3. 明文密码直接比较（不加密）
+        System.out.println("【日志】数据库中的密码: " + userFromDb.getUserPwd());
+
+        // 3. 直接使用字符串的 .equals() 方法进行明文密码比较
         if (password.equals(userFromDb.getUserPwd())) {
-            return userFromDb; // 登录成功
+            System.out.println("【日志】登录成功：密码匹配正确！");
+            System.out.println("=============================================");
+            // 密码正确，返回完整的用户信息
+            return userFromDb;
         }
 
+        System.out.println("【日志】登录失败：密码错误。");
+        System.out.println("=============================================");
         // 密码错误，返回null
         return null;
     }

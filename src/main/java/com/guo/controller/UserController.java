@@ -11,7 +11,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
-
 /**
  * 统一用户认证与普通用户功能控制器
  */
@@ -26,45 +25,60 @@ public class UserController {
     // private IBorrowRecordService borrowRecordService;
 
     /**
-     * 显示根路径或登录页面
-     * @return 登录页面视图名
+     * 当用户访问根路径时，显示登录页面。
+     * @return 返回登录页的视图名 "index"
      */
     @GetMapping("/")
-    public String showIndexPage() {
+    public String showLoginPage() {
         return "index";
     }
 
     /**
      * 处理统一登录请求
-     * @param username 用户名
-     * @param password 原始密码
-     * @param session HttpSession对象，用于存储用户会话
-     * @param redirectAttributes 用于在重定向时传递闪存属性（如错误信息）
-     * @return 登录成功后的主页视图名（重定向），或失败后返回登录页
+     * @param username 从表单接收的用户名
+     * @param password 从表单接收的密码
+     * @param session  用于在登录成功后存储用户信息
+     * @param model    用于在登录失败时向页面传递错误信息
+     * @return 字符串，根据结果决定是重定向还是返回登录页
      */
     @PostMapping("/login")
     public String login(@RequestParam("username") String username,
                         @RequestParam("password") String password,
                         HttpSession session,
-                        RedirectAttributes redirectAttributes) {
+                        Model model) {
 
-        // 调用Service层进行登录验证
+        // --- 这里是我们熟悉的日志，现在它应该会被打印出来了 ---
+        System.out.println("=============================================");
+        System.out.println("【手动登录】尝试登录，用户名: " + username);
+
+        // 调用我们早已写好的Service层login方法
         User user = userService.login(username, password);
 
+        // 判断Service层返回的结果
         if (user != null) {
-            // 登录成功，将完整的用户信息存入session
+            // --- 登录成功 ---
+            System.out.println("【手动登录】登录成功！用户角色: " + user.getRole());
+
+            // 1. 将完整的用户信息存入Session，以便后续页面使用
             session.setAttribute("user", user);
 
-            // 根据角色判断重定向到哪个主页
+            // 2. 根据角色判断应该跳转到哪个页面
             if ("admin".equals(user.getRole())) {
+                // 如果是管理员，重定向到管理员主页
                 return "redirect:/admin/index";
             } else {
+                // 如果是普通用户，重定向到用户主页
                 return "redirect:/user/index";
             }
         } else {
-            // 登录失败，通过RedirectAttributes添加错误信息，然后重定向回登录页
-            redirectAttributes.addFlashAttribute("loginError", "用户名或密码错误！");
-            return "redirect:/";
+            // --- 登录失败 ---
+            System.out.println("【手动登录】登录失败：用户名或密码错误。");
+
+            // 1. 通过Model向前端页面传递一个错误信息
+            model.addAttribute("loginError", "用户名或密码错误！");
+
+            // 2. 返回到登录页面，让用户重新登录
+            return "index";
         }
     }
 

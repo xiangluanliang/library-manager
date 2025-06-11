@@ -6,7 +6,7 @@ import com.guo.domain.User;
  * 用户服务接口
  * 定义了所有与用户认证和普通用户自身相关的业务逻辑。
  */
-public interface IUserService {
+public interface IUserService{
 
     /**
      * 用户登录验证。

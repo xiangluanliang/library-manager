@@ -31,7 +31,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 CREATE TABLE `user` (
                         `user_id` int(11) NOT NULL AUTO_INCREMENT,
                         `user_name` varchar(20) NOT NULL,
-                        `user_pwd` varchar(64) NOT NULL COMMENT '建议存储加密后的密码，例如使用BCrypt',
+                        `user_pwd` varchar(64) NOT NULL COMMENT ,
                         `user_email` varchar(50) NOT NULL,
                         `max_borrow` int(11) NOT NULL DEFAULT 5 COMMENT '最大可借阅数量',
                         `role` ENUM('user', 'admin') NOT NULL DEFAULT 'user' COMMENT '角色：普通用户或管理员',

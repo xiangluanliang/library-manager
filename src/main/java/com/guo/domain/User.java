@@ -2,7 +2,7 @@ package com.guo.domain;
 
 import java.util.Date;
 
-public class User {
+public class User{
     private Integer userId;
 
     private String userName;

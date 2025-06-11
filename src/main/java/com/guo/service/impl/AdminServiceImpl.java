@@ -4,7 +4,6 @@ import com.guo.domain.User;
 import com.guo.mapper.UserMapper;
 import com.guo.service.IAdminService;
 import com.guo.utils.page.Page;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,9 +17,6 @@ public class AdminServiceImpl implements IAdminService {
 
     @Resource
     private UserMapper userMapper;
-
-    // 引入密码编码器，用于对新用户的密码进行加密
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     /**
      * (管理员操作) 分页查询所有用户。
@@ -68,7 +64,7 @@ public class AdminServiceImpl implements IAdminService {
         }
 
         // 核心安全步骤：对用户的明文密码进行加密
-        String encodedPassword = passwordEncoder.encode(newUser.getUserPwd());
+        String encodedPassword = newUser.getUserPwd();
         newUser.setUserPwd(encodedPassword);
 
         // 插入数据库，使用selective方法更安全
