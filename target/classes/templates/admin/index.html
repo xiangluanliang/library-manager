@@ -12,10 +12,6 @@
             padding: 0;
         }
 
-        .layui-side-scroll {
-            background-color: #2f4056;
-        }
-
         .layui-nav-tree .layui-nav-item > a {
             color: #fff !important;
             font-size: 16px;
@@ -62,15 +58,6 @@
             border-top: 1px solid #e6e6e6;
         }
 
-        .layui-layout-admin .layui-header {
-            background-color: #1e9fff;
-        }
-
-        .layui-layout-admin .layui-logo {
-            color: #fff;
-            font-weight: bold;
-        }
-
         .layui-nav .layui-nav-item a i {
             margin-right: 6px;
         }
@@ -83,42 +70,8 @@
 
     <!-- 顶部 header -->
     <div th:include="common/header :: header"></div>
-
     <!-- 左侧菜单 -->
-    <div class="layui-side layui-bg-black">
-        <div class="layui-side-scroll">
-            <ul class="layui-nav layui-nav-tree" lay-filter="menu">
-
-                <li class="layui-nav-item">
-                    <a href="javascript:;"><i class="layui-icon">&#xe857;</i>书籍管理</a>
-                    <dl class="layui-nav-child">
-                        <dd><a href="/addBookPage">录入新书</a></dd>
-                        <dd><a href="/addCategoryPage?pageNum=1">新建类别</a></dd>
-                        <dd><a href="/showBooksPage">查询书籍</a></dd>
-                    </dl>
-                </li>
-
-                <li class="layui-nav-item">
-                    <a href="javascript:;"><i class="layui-icon">&#xe770;</i>用户管理</a>
-                    <dl class="layui-nav-child">
-                        <dd><a href="/showUsersPage?pageNum=1">查询用户</a></dd>
-                        <dd><a href="/addUserPage">新增用户</a></dd>
-                    </dl>
-                </li>
-
-                <li class="layui-nav-item">
-                    <a href="javascript:;"><i class="layui-icon">&#xe705;</i>借阅信息</a>
-                    <dl class="layui-nav-child">
-                        <dd><a href="/allBorrowBooksRecordPage?pageNum=1">所有记录</a></dd>
-                    </dl>
-                </li>
-
-                <li class="layui-nav-item">
-                    <a href="/adminInfoPage"><i class="layui-icon">&#xe66f;</i>个人信息</a>
-                </li>
-            </ul>
-        </div>
-    </div>
+    <div th:include="admin/sidebar :: sidebar('')"></div>
 
     <!-- 主体内容 -->
     <div class="layui-body layui-container">

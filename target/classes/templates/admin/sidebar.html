@@ -1,0 +1,101 @@
+<!-- templates/common/admin_sidebar.html -->
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <style>
+    body {
+      font-family: "Microsoft YaHei", sans-serif;
+      background: linear-gradient(135deg, #eef1f7, #dde7f3);
+      margin: 0;
+      padding: 0;
+    }
+
+    .layui-side-scroll {
+      background-color: #2f4056;
+    }
+
+    .layui-nav-tree .layui-nav-item > a {
+      color: #fff !important;
+      font-size: 16px;
+      padding-left: 20px;
+    }
+
+    .layui-nav-child dd a {
+      padding-left: 40px !important;
+    }
+
+    .layui-nav-child dd a:hover {
+      background-color: #1e9fff !important;
+      color: #fff !important;
+    }
+
+    #index img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    }
+
+    .layui-nav .layui-nav-item a i {
+      margin-right: 6px;
+    }
+
+  </style>
+</head>
+<body>
+<div th:fragment="sidebar(activePage)">
+  <div class="layui-side layui-bg-black">
+    <div class="layui-side-scroll">
+      <ul class="layui-nav layui-nav-tree" lay-filter="adminMenu">
+
+        <li class="layui-nav-item"
+            th:classappend="${activePage.startsWith('book')} ? ' layui-nav-itemed'">
+          <a href="javascript:;"><i class="layui-icon">&#xe857;</i> 书籍管理</a>
+          <dl class="layui-nav-child">
+            <dd th:class="${activePage == 'bookAdd'} ? 'layui-this'">
+              <a href="/addBookPage">录入新书</a>
+            </dd>
+            <dd th:class="${activePage == 'bookCategory'} ? 'layui-this'">
+              <a href="/addCategoryPage?pageNum=1">新建类别</a>
+            </dd>
+            <dd th:class="${activePage == 'bookShow'} ? 'layui-this'">
+              <a href="/showBooksPage">查询书籍</a>
+            </dd>
+          </dl>
+        </li>
+
+        <li class="layui-nav-item"
+            th:classappend="${activePage.startsWith('user')} ? ' layui-nav-itemed'">
+          <a href="javascript:;"><i class="layui-icon">&#xe770;</i> 用户管理</a>
+          <dl class="layui-nav-child">
+            <dd th:class="${activePage == 'userShow'} ? 'layui-this'">
+              <a href="/showUsersPage?pageNum=1">查询用户</a>
+            </dd>
+            <dd th:class="${activePage == 'userAdd'} ? 'layui-this'">
+              <a href="/addUserPage">新增用户</a>
+            </dd>
+          </dl>
+        </li>
+
+        <li class="layui-nav-item"
+            th:classappend="${activePage.startsWith('borrow')} ? ' layui-nav-itemed'">
+          <a href="javascript:;"><i class="layui-icon">&#xe705;</i> 借阅信息</a>
+          <dl class="layui-nav-child">
+            <dd th:class="${activePage == 'borrowAll'} ? 'layui-this'">
+              <a href="/allBorrowBooksRecordPage?pageNum=1">所有记录</a>
+            </dd>
+          </dl>
+        </li>
+
+        <li class="layui-nav-item"
+            th:classappend="${activePage == 'adminInfo'} ? ' layui-this'">
+          <a href="/adminInfoPage"><i class="layui-icon">&#xe66f;</i> 个人信息</a>
+        </li>
+
+      </ul>
+    </div>
+  </div>
+</div>
+</body>
+</html>

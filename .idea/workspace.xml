@@ -5,13 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6b87cd2c-56d3-45c6-8dd2-f2335b7061d4" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/resources/templates/common/header.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/templates/admin/sidebar.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/templates/user/sidebar.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/db/library-manager-system.sql" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/db/library-manager-system.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/images/background.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/images/background.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/images/lib1.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/images/lib1.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/templates/admin/addBook.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/admin/addBook.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/templates/admin/addCategory.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/admin/addCategory.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/templates/admin/addUser.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/admin/addUser.html" afterDir="false" />
@@ -20,16 +17,24 @@
       <change beforePath="$PROJECT_DIR$/src/main/resources/templates/admin/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/admin/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/templates/admin/showBooks.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/admin/showBooks.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/templates/admin/showUsers.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/admin/showUsers.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/common/admin_header.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/common/footer.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/common/footer.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/common/user_header.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/common/header.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/common/header.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/templates/user/borrowingBooks.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/user/borrowingBooks.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/templates/user/borrowingBooksRecord.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/user/borrowingBooksRecord.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/templates/user/findBook.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/user/findBook.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/templates/user/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/user/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/templates/user/returnBooks.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/user/returnBooks.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/templates/user/userMessage.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/user/userMessage.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/templates/admin/addBook.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/admin/addBook.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/templates/admin/addCategory.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/admin/addCategory.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/templates/admin/adminInfo.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/admin/adminInfo.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/templates/admin/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/admin/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/templates/admin/showBooks.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/admin/showBooks.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/templates/common/header.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/common/header.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/templates/user/borrowingBooks.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/user/borrowingBooks.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/templates/user/borrowingBooksRecord.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/user/borrowingBooksRecord.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/templates/user/findBook.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/user/findBook.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/templates/user/returnBooks.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/user/returnBooks.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/templates/user/userMessage.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/user/userMessage.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,6 +60,13 @@
         </entry>
       </file>
     </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="HTML File" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -139,6 +151,7 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
     &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
     &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
     &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
@@ -160,6 +173,11 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\Code\HomeWork\DataBaseShiXun_cxd\library_manager_system\src\main\resources\templates\common" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration name="DemoApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
       <module name="demo" />
@@ -184,6 +202,10 @@
       <workItem from="1749130831712" duration="2957000" />
       <workItem from="1749135966475" duration="711000" />
       <workItem from="1749143196881" duration="3042000" />
+      <workItem from="1749177471924" duration="3273000" />
+      <workItem from="1749223318948" duration="674000" />
+      <workItem from="1749614060583" duration="2466000" />
+      <workItem from="1749621693869" duration="2753000" />
     </task>
     <servers />
   </component>

@@ -83,32 +83,7 @@
     <div th:include="common/header :: header"></div>
 
     <!-- 左侧导航栏 -->
-    <div class="layui-side layui-bg-black">
-        <div class="layui-side-scroll">
-            <ul class="layui-nav layui-nav-tree" lay-filter="menu">
-
-                <li class="layui-nav-item layui-nav-itemed">
-                    <a href="javascript:;"><i class="layui-icon">&#xe705;</i> 借阅管理</a>
-                    <dl class="layui-nav-child">
-                        <dd class="layui-this"><a href="/userBorrowBookRecord">借书记录</a></dd>
-                        <dd><a href="/borrowingPage">借阅书籍</a></dd>
-                    </dl>
-                </li>
-
-                <li class="layui-nav-item">
-                    <a href="javascript:;"><i class="layui-icon">&#xe857;</i> 书籍管理</a>
-                    <dl class="layui-nav-child">
-                        <dd><a href="/userReturnBooksPage">归还书籍</a></dd>
-                        <dd><a href="/findBookPage">查询书籍</a></dd>
-                    </dl>
-                </li>
-
-                <li class="layui-nav-item">
-                    <a href="/userMessagePage"><i class="layui-icon">&#xe66f;</i> 个人信息</a>
-                </li>
-            </ul>
-        </div>
-    </div>
+    <div th:include="user/sidebar :: sidebar('borrowRecord')"></div>
 
     <!-- 主体内容区域 -->
     <div class="layui-body">
