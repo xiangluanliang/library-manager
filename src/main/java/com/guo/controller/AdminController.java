@@ -1,168 +1,200 @@
 package com.guo.controller;
 
-import com.guo.domain.Admin;
-import com.guo.domain.BookCategory;
 import com.guo.domain.User;
-import com.guo.domain.Vo.BookVo;
-import com.guo.service.IAdminService;
-import com.guo.service.IBookCategoryService;
+// 预留未来需要用到的新实体类和Service
+// import com.guo.domain.BookInfo;
+// import com.guo.domain.BorrowRecord;
+// import com.guo.service.IBookService;
+// import com.guo.service.IRecordService;
 import com.guo.service.IUserService;
-import com.guo.utils.page.Page;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
+/**
+ * 管理员功能控制器
+ * 负责处理所有管理员专属的页面导航和操作请求。
+ */
 @Controller
+@RequestMapping("/admin") // 为所有方法添加"/admin"前缀
 public class AdminController {
 
     @Resource
-    private IAdminService adminService;
-    @Resource
-    private IBookCategoryService bookCategoryService;
-    @Resource
     private IUserService userService;
 
-    /**
-     * 判断admin是否存在
-     *
-     * @param adminName
-     * @return
-     */
-    @RequestMapping("/isAdminExist")
-    @ResponseBody
-    public String adminIsExist(@Param("adminName") String adminName) {
-        boolean b = adminService.adminIsExist(adminName);
-        if (b) {
-            return "true";
-        } else {
-            return "false";
-        }
-    }
+    // TODO: 后续需要注入其他重构后的Service
+    // @Resource
+    // private IBookService bookService;
+    // @Resource
+    // private IRecordService recordService;
+
 
     /**
-     * 管理员登陆
-     *
-     * @param userName
-     * @param password
-     * @return
+     * 显示管理员主页
+     * @return 管理员主页视图
      */
-    @PostMapping("/adminLogin")
-    public String adminLogin(@Param("userName") String userName, @Param("password") String password, HttpServletRequest request) {
-        Admin admin = adminService.adminLogin(userName, password);
-
-        if (admin == null) {
-            // flag 为 1 表示 登录失败 
-            request.getSession().setAttribute("flag", 1);
-            return "index";
-        }
-
-        // flag = 0 表示用户名密码校验成功
-        request.getSession().setAttribute("flag", 0);
-        request.getSession().setAttribute("admin", admin);
+    @GetMapping("/index")
+    public String showAdminIndex() {
         return "admin/index";
     }
 
-    /**
-     * 返回添加书籍页面
-     */
-    @RequestMapping("/addBookPage")
-    public String addBookPage() {
-        return "admin/addBook";
-    }
+    // --- 用户管理 ---
 
     /**
-     * 返回添加类别页面
+     * 分页显示所有用户列表
+     * @param pageNum 当前页码，默认为第一页
+     * @param model Model对象
+     * @return 显示用户列表的视图
      */
-    @RequestMapping("/addCategoryPage")
-    public String addCategoryPage(@RequestParam("pageNum") int pageNum, Model model) {
-        Page<BookCategory> page = bookCategoryService.selectBookCategoryByPageNum(pageNum);
-        model.addAttribute("page", page);
-        return "admin/addCategory";
-    }
-
-    /**
-     * 返回查询状态页面
-     */
-    @RequestMapping("/showStausPage")
-    public String showStatusPage() {
-        return "admin/showStaus";
-    }
-
-    /**
-     * 返回管理员首页
-     */
-    @RequestMapping("/adminIndex")
-    public String returnAdminIndexPage() {
-        return "admin/index";
-    }
-
-
-    /**
-     * 返回查询用户页面
-     */
-    @RequestMapping("/showUsersPage")
-    public String showUsersPage(Model model, @RequestParam("pageNum") int pageNum) {
-        Page<User> page = userService.findUserByPage(pageNum);
-        model.addAttribute("page", page);
+    @GetMapping("/users")
+    public String showUsersPage(@RequestParam(value = "pageNum", defaultValue = "1") int pageNum, Model model) {
+        // TODO: 在IUserService或新的IAdminService中实现分页查询所有用户的逻辑
+        // Page<User> userPage = userService.findAllUsersByPage(pageNum);
+        // model.addAttribute("page", userPage);
         return "admin/showUsers";
     }
 
     /**
-     * 返回&emsp;&emsp;查询书籍页面
+     * 显示新增用户页面
+     * @return 新增用户视图
      */
-    @RequestMapping("/showBooksPage")
-    public String showBooksPage(Model model) {
-        Page<BookVo> page = new Page<BookVo>();
-        page.setPageCount(1);
-        page.setPageNum(1);
-        model.addAttribute("page", page);
-        return "admin/showBooks";
-    }
-
-
-    /**
-     * 管理员退出登陆
-     *
-     * @param request
-     * @return
-     */
-    @RequestMapping("/adminLogOut")
-    public String userLogOut(HttpServletRequest request) {
-        request.getSession().invalidate();
-        return "index";
-    }
-
-    /**
-     * 返回新增用户页面
-     */
-    @RequestMapping("/addUserPage")
-    public String addUserPage() {
+    @GetMapping("/users/add")
+    public String showAddUserPage() {
         return "admin/addUser";
     }
 
-    @RequestMapping("/adminInfoPage")
-    public String adminInfo() {
-        return "admin/adminInfo";
-    }
-    
     /**
-     * 更新管理员信息
-     *
-     * @param admin
-     * @param request
-     * @return
+     * 处理新增用户请求
+     * @param newUser 包含新用户信息的对象
+     * @param redirectAttributes 用于重定向后显示提示信息
+     * @return 重定向到用户列表页面
      */
-    @RequestMapping("/updateAdmin")
-    @ResponseBody
-    public boolean updateAdmin(Admin admin, HttpServletRequest request) {
-        return adminService.updateAdmin(admin, request);
+    @PostMapping("/users/add")
+    public String addUser(User newUser, RedirectAttributes redirectAttributes) {
+        // TODO: 在IUserService或新的IAdminService中实现新增用户的逻辑，注意密码要加密
+        // boolean success = userService.addNewUser(newUser);
+        // if (success) {
+        //     redirectAttributes.addFlashAttribute("message", "用户添加成功！");
+        // } else {
+        //     redirectAttributes.addFlashAttribute("error", "添加失败，用户名可能已存在。");
+        // }
+        return "redirect:/admin/users";
     }
 
+    /**
+     * 处理删除用户请求
+     * @param userId 要删除的用户ID
+     * @return 操作结果（JSON格式）
+     */
+    @PostMapping("/users/delete")
+    @ResponseBody
+    public String deleteUser(@RequestParam("userId") int userId) {
+        // TODO: 在IUserService或新的IAdminService中实现删除用户的逻辑
+        // boolean success = userService.deleteUserById(userId);
+        // return success ? "true" : "false";
+        return "true"; // 暂时返回true
+    }
+
+
+    // --- 图书管理 ---
+
+    /**
+     * 显示图书管理页面
+     * @param pageNum 当前页码
+     * @param model Model对象
+     * @return 显示图书列表的视图
+     */
+    @GetMapping("/books")
+    public String showBooksPage(@RequestParam(value = "pageNum", defaultValue = "1") int pageNum, Model model) {
+        // TODO: 在IBookService中实现分页查询所有图书的逻辑
+        // Page<BookInfo> bookPage = bookService.findAllBooksByPage(pageNum);
+        // model.addAttribute("page", bookPage);
+        return "admin/showBooks";
+    }
+
+    /**
+     * 显示新增图书页面
+     * @return 新增图书视图
+     */
+    @GetMapping("/books/add")
+    public String showAddBookPage() {
+        // TODO: 查询所有图书分类并添加到Model中，供下拉框选择
+        // List<BookCategory> categories = bookCategoryService.findAll();
+        // model.addAttribute("categories", categories);
+        return "admin/addBook";
+    }
+
+
+    // --- 分类管理 ---
+
+    /**
+     * 显示分类管理页面
+     * @return 分类管理视图
+     */
+    @GetMapping("/categories")
+    public String showCategoryPage(Model model) {
+        // TODO: 在IBookCategoryService中实现查询所有分类的逻辑
+        // List<BookCategory> categoryTree = bookCategoryService.findCategoryTree();
+        // model.addAttribute("categoryTree", categoryTree);
+        return "admin/addCategory";
+    }
+
+    // --- 记录管理 ---
+
+    /**
+     * 显示所有借阅记录
+     * @param pageNum 当前页码
+     * @param model Model对象
+     * @return 显示所有借阅记录的视图
+     */
+    @GetMapping("/records/borrowing")
+    public String showAllBorrowingRecords(@RequestParam(value = "pageNum", defaultValue = "1") int pageNum, Model model) {
+        // TODO: 在新的IRecordService中实现分页查询所有借阅记录的逻辑
+        // Page<BorrowRecordVo> recordPage = recordService.findAllBorrowRecordsByPage(pageNum);
+        // model.addAttribute("page", recordPage);
+        return "admin/allBorrowingBooksRecord";
+    }
+
+
+    // --- 管理员个人信息 ---
+
+    /**
+     * 显示当前管理员的个人信息页面
+     * @return 个人信息视图
+     */
+    @GetMapping("/profile")
+    public String showAdminProfilePage() {
+        return "admin/adminInfo";
+    }
+
+    /**
+     * 处理更新管理员个人信息的请求
+     * @param adminToUpdate 包含更新信息的对象
+     * @param session HttpSession对象，用于更新会话中的信息
+     * @param redirectAttributes 用于重定向后显示提示信息
+     * @return 操作结果
+     */
+    @PostMapping("/profile/update")
+    @ResponseBody
+    public String updateAdminProfile(User adminToUpdate, HttpSession session, RedirectAttributes redirectAttributes) {
+        User currentAdmin = (User) session.getAttribute("user");
+        adminToUpdate.setUserId(currentAdmin.getUserId());
+
+        // TODO: 调用IUserService中的更新方法
+        // boolean success = userService.updateUserProfile(adminToUpdate);
+        // if(success) {
+        //    session.setAttribute("user", userService.findUserById(currentAdmin.getUserId()));
+        //    return "true";
+        // }
+        // return "false";
+        return "true"; // 暂时返回true
+    }
 }

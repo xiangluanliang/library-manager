@@ -2,9 +2,7 @@ package com.guo.mapper;
 
 import com.guo.domain.BookCategory;
 import com.guo.domain.BookCategoryExample;
-
 import java.util.List;
-
 import org.apache.ibatis.annotations.Param;
 
 public interface BookCategoryMapper {
@@ -29,9 +27,4 @@ public interface BookCategoryMapper {
     int updateByPrimaryKeySelective(BookCategory record);
 
     int updateByPrimaryKey(BookCategory record);
-
-    //分页查询
-    List<BookCategory> selectByPageNum(@Param("currIndex") int currIndex, @Param("pageSize") int pageSize);
-
-    int selectAllCount();
 }

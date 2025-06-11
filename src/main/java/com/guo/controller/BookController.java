@@ -1,117 +1,128 @@
 package com.guo.controller;
 
-import com.guo.domain.Book;
 import com.guo.domain.BookCategory;
-import com.guo.domain.Vo.BookVo;
-import com.guo.service.IAdminService;
-import com.guo.service.IBookCategoryService;
-import com.guo.service.IBookService;
-import com.guo.utils.page.Page;
+import com.guo.domain.BookInfo;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.annotation.Resource;
 import java.util.List;
 
+/**
+ * 图书信息控制器
+ * 负责处理图书的查询、展示以及管理员对图书和分类的管理操作。
+ */
 @Controller
+@RequestMapping("/books") // 为所有图书相关请求添加"/books"前缀
 public class BookController {
-    @Resource
-    private IAdminService adminService;
-    @Resource
-    private IBookService bookService;
-    @Resource
-    private IBookCategoryService bookCategoryService;
+
+    // TODO: 后续需要注入重构后的IBookService和IBookCategoryService
+    // @Resource
+    // private IBookService bookService;
+    // @Resource
+    // private IBookCategoryService bookCategoryService;
+
 
     /**
-     * 管理员&emsp;&emsp;录入新书
-     *
-     * @param book
-     * @return
+     * （用户功能）显示图书搜索/列表页面
+     * @param keyword  搜索关键词，可以为空
+     * @param pageNum  当前页码
+     * @param model    Model对象
+     * @return 图书列表视图
      */
-    @RequestMapping("/addBook")
+    @GetMapping("/search")
+    public String searchBooks(@RequestParam(value = "keyword", required = false) String keyword,
+                              @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+                              Model model) {
+
+        // TODO: 在IBookService中实现图书搜索和分页功能
+        // Page<BookInfo> bookPage = bookService.searchAndPaginate(keyword, pageNum);
+        // model.addAttribute("page", bookPage);
+        // model.addAttribute("keyword", keyword);
+
+        System.out.println("正在搜索图书，逻辑待实现...");
+        return "user/findBook"; // 对应旧的 user/findBook.html
+    }
+
+
+    // --- 以下为管理员专属功能 ---
+
+    /**
+     * (管理员功能) 处理添加新书的请求
+     * @param bookInfo 包含新书信息的对象
+     * @param redirectAttributes 用于重定向后显示提示
+     * @return 重定向到图书管理页面
+     */
+    @PostMapping("/admin/add")
+    public String addBook(BookInfo bookInfo, RedirectAttributes redirectAttributes) {
+        // TODO: 在IBookService中实现添加图书的逻辑
+        // boolean success = bookService.addNewBook(bookInfo);
+        // if (success) {
+        //     redirectAttributes.addFlashAttribute("message", "图书《" + bookInfo.getTitle() + "》添加成功！");
+        // } else {
+        //     redirectAttributes.addFlashAttribute("error", "添加失败，ISBN可能已存在。");
+        // }
+        return "redirect:/admin/books"; // 操作结束后重定向到管理员的图书列表页
+    }
+
+    /**
+     * (管理员功能) 处理删除图书的请求
+     * @param bookId 要删除的图书ID
+     * @return 操作结果
+     */
+    @PostMapping("/admin/delete")
     @ResponseBody
-    public String addBook(Book book) {
-        boolean res = adminService.addBook(book);
-        if (res) {
-            return "true";
-        }
-        return "false";
+    public String deleteBook(@RequestParam("bookId") int bookId) {
+        // TODO: 在IBookService中实现删除图书的逻辑
+        // 注意：删除前需要检查该书是否还有未归还的借阅记录
+        // boolean success = bookService.deleteBookById(bookId);
+        // return success ? "true" : "false";
+        return "true";
     }
 
-    /**
-     * 返回&emsp;&emsp;查询书籍结果页
-     *
-     * @param pageNum
-     * @param model
-     * @return
-     */
-    @RequestMapping("/showBooksResultPageByCategoryId")
-    public String showBooksResultPageByCategoryId(@RequestParam("pageNum") int pageNum, @RequestParam("bookCategory") int bookCategory, Model model) {
-        Page<BookVo> page = bookService.findBooksByCategoryId(bookCategory, pageNum);
-        model.addAttribute("page", page);
-        model.addAttribute("bookCategory", bookCategory);
-        return "admin/showBooks";
-    }
+
+    // --- 图书分类管理 API ---
 
     /**
-     * 返回用户&emsp;&emsp;查询书籍结果页
-     *
-     * @param bookPartInfo
-     * @return
+     * (API) 获取所有图书分类
+     * @return 图书分类列表 (JSON格式)
      */
-    @RequestMapping("/findBookByBookPartInfo")
-    public String findBooksResultPage(@RequestParam("bookPartInfo") String bookPartInfo, Model model) {
-        
-        List<BookVo> bookVos = bookService.selectBooksByBookPartInfo(bookPartInfo);
-
-        model.addAttribute("bookList", bookVos);
-        return "user/findBook";
-    }
-
-    /**
-     * 查询所有书籍种类
-     *
-     * @return
-     */
-    @RequestMapping("/findAllBookCategory")
+    @GetMapping("/categories/all")
     @ResponseBody
-    public List<BookCategory> findAllBookCategory() {
-        return adminService.getBookCategories();
+    public List<BookCategory> getAllBookCategories() {
+        // TODO: 在IBookCategoryService中实现查询所有分类的逻辑
+        // return bookCategoryService.findAll();
+        System.out.println("正在获取所有图书分类，逻辑待实现...");
+        return null; // 暂时返回null
     }
 
     /**
-     * 新建书籍种类
-     *
-     * @param bookCategory
-     * @return
+     * (管理员功能) 添加新的图书分类
+     * @param bookCategory 包含新分类信息的对象
+     * @return 操作结果
      */
-    @RequestMapping("/addBookCategory")
+    @PostMapping("/categories/admin/add")
     @ResponseBody
     public String addBookCategory(BookCategory bookCategory) {
-        boolean b = adminService.addBookCategory(bookCategory);
-        if (b) {
-            return "true";
-        }
-        return "false";
+        // TODO: 在IBookCategoryService中实现添加分类的逻辑
+        // boolean success = bookCategoryService.addCategory(bookCategory);
+        // return success ? "true" : "false";
+        return "true";
     }
 
     /**
-     * 根据书籍种类id删除种类
-     *
-     * @param bookCategoryId
-     * @return
+     * (管理员功能) 删除一个图书分类
+     * @param categoryId 要删除的分类ID
+     * @return 操作结果
      */
-    @RequestMapping("/deleteCategory")
+    @PostMapping("/categories/admin/delete")
     @ResponseBody
-    public String deleteBookCategoryById(@RequestParam("bookCategoryId") int bookCategoryId) {
-        int res = bookCategoryService.deleteBookCategoryById(bookCategoryId);
-        if (res > 0) {
-            return "true";
-        }
-        return "false";
+    public String deleteBookCategory(@RequestParam("categoryId") int categoryId) {
+        // TODO: 在IBookCategoryService中实现删除分类的逻辑
+        // 注意：删除前需要检查该分类下是否还有图书
+        // boolean success = bookCategoryService.deleteCategoryById(categoryId);
+        // return success ? "true" : "false";
+        return "true";
     }
-
 }

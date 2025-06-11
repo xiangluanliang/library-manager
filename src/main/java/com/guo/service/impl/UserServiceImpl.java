@@ -1,205 +1,123 @@
 package com.guo.service.impl;
 
-import com.guo.domain.*;
-import com.guo.domain.Vo.BorrowingBooksVo;
-import com.guo.mapper.BookMapper;
-import com.guo.mapper.BorrowingBooksMapper;
-import com.guo.mapper.DepartmentMapper;
+import com.guo.domain.User;
 import com.guo.mapper.UserMapper;
 import com.guo.service.IUserService;
-import com.guo.utils.page.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
 
+/**
+ * 用户服务实现类
+ * 负责处理用户认证和普通用户相关的业务逻辑
+ */
 @Service
 public class UserServiceImpl implements IUserService {
 
     @Resource
     private UserMapper userMapper;
-    @Resource
-    private DepartmentMapper departmentMapper;
-    @Resource
-    private BorrowingBooksMapper borrowingBooksMapper;
-    @Resource
-    private BookMapper bookMapper;
 
+    // TODO: 后续实现具体业务时，注入新的Mapper
+    // @Resource
+    // private BorrowRecordMapper borrowRecordMapper;
+    // @Resource
+    // private BookInventoryMapper bookInventoryMapper;
+
+    /**
+     * 用户登录的核心实现
+     * @param username 用户名
+     * @param password 用户输入的原始密码
+     * @return 成功则返回User对象，失败则返回null
+     */
     @Override
-    public List<User> findUserByUserName(String userName) {
-        
-        UserExample userExample = new UserExample();
-        UserExample.Criteria criteria = userExample.createCriteria();
-        
-        criteria.andUserNameEqualTo(userName);
-        List<User> users = userMapper.selectByExample(userExample);
-        
-        return users;
-    }
+    public User login(String username, String password) {
+        // 1. 调用我们自定义的findByUsername方法，直接获取唯一的用户对象
+        User userFromDb = userMapper.findByUsername(username);
 
-    @Override
-    public List<Department> findAllDepts() {
-
-        return departmentMapper.selectByExample(new DepartmentExample());
-    }
-
-    @Override
-    public User userLogin(String userName, String password) {
-        
-        List<User> users = findUserByUserName(userName);
-        
-        if (null == users) {
+        // 2. 检查用户是否存在
+        if (userFromDb == null) {
+            // 用户名不存在，直接返回null
             return null;
         }
-        
-        for (User user : users) {
-            if (user.getUserPwd().equals(password)) {
-                return user;
-            }
+
+        // 3. 明文密码直接比较（不加密）
+        if (password.equals(userFromDb.getUserPwd())) {
+            return userFromDb; // 登录成功
         }
+
+        // 密码错误，返回null
         return null;
     }
 
-    @Override
-    public boolean updateUser(User user, HttpServletRequest request) {
-        //获取session对象中user对象
-        User sessionUser = (User) request.getSession().getAttribute("user");
-        user.setUserId(sessionUser.getUserId());
-        
-        int n = userMapper.updateByPrimaryKey(user);
-
-        if (n > 0) {
-            //修改成功，更新session对象
-            User newUser = userMapper.selectByPrimaryKey(user.getUserId());
-            request.getSession().setAttribute("user", newUser);
-            return true;
-        }
-
-        return false;
-    }
-
-    @Override
-    public List<BorrowingBooksVo> findAllBorrowingBooks(HttpServletRequest request) {
-        User user = (User) request.getSession().getAttribute("user");
-
-        //设置查询条件 userId
-        BorrowingBooksExample borrowingBooksExample = new BorrowingBooksExample();
-        BorrowingBooksExample.Criteria criteria = borrowingBooksExample.createCriteria();
-        criteria.andUserIdEqualTo(user.getUserId());
-        List<BorrowingBooks> borrowingBooksList = borrowingBooksMapper.selectByExample(borrowingBooksExample);
-        if (null == borrowingBooksList) {
-            return null;
-        }
-        //将数据库表对应的对象(Do)转化成视图层对象（VO）
-        List<BorrowingBooksVo> res = new LinkedList<BorrowingBooksVo>();
-        for (BorrowingBooks borrowingBooks : borrowingBooksList) {
-            Book book = bookMapper.selectByPrimaryKey(borrowingBooks.getBookId());
-            BorrowingBooksVo borrowingBooksVo = new BorrowingBooksVo();
-            borrowingBooksVo.setBook(book);
-
-            //日期转换
-            Date date1 = borrowingBooks.getDate();
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            String dateOfBorrowing = sdf.format(date1);
-
-            //算出还书日期
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(date1);
-            calendar.add(Calendar.MONTH, 2);//增加两个月
-            Date date2 = calendar.getTime();
-            String dateOfReturn = sdf.format(date2);
-
-            borrowingBooksVo.setDateOfBorrowing(dateOfBorrowing);
-            borrowingBooksVo.setDateOfReturn(dateOfReturn);
-            res.add(borrowingBooksVo);
-        }
-        return res;
-    }
-
-    @Override
-    public boolean userReturnBook(int bookId, HttpServletRequest request) {
-        User user = (User) request.getSession().getAttribute("user");
-        BorrowingBooksExample borrowingBooksExample = new BorrowingBooksExample();
-        BorrowingBooksExample.Criteria criteria = borrowingBooksExample.createCriteria();
-        criteria.andUserIdEqualTo(user.getUserId());
-        criteria.andBookIdEqualTo(bookId);
-
-        //删除数据库中user_d等于userId,book_id等于bookId的记录
-        int n = borrowingBooksMapper.deleteByExample(borrowingBooksExample);
-        if (n > 0) return true;
-        return false;
-    }
-
-    @Override
-    public boolean userBorrowingBook(int bookId, HttpServletRequest request) {
-        User user = (User) request.getSession().getAttribute("user");
-
-        //检查该书是否可借,从借书记录表中查询该书是否已借出
-        BorrowingBooksExample borrowingBooksExample = new BorrowingBooksExample();
-        BorrowingBooksExample.Criteria criteria = borrowingBooksExample.createCriteria();
-        criteria.andBookIdEqualTo(bookId);
-        List<BorrowingBooks> list = borrowingBooksMapper.selectByExample(borrowingBooksExample);
-
-        if (list.size() > 0) {
-            return false;
-        }
-
-        BorrowingBooks borrowingBooks = new BorrowingBooks();
-        borrowingBooks.setBookId(bookId);
-        borrowingBooks.setUserId(user.getUserId());
-        borrowingBooks.setDate(new Date());
-        int n = 0;
-
-
-        try {
-            //数据库中增加一条借书记录 【如果插入失败 , 则借书失败】
-            n = borrowingBooksMapper.insert(borrowingBooks);
-        } catch (Exception e) {
-            // e.printStackTrace();
-            return false;
-        }
-
-
-        if (n > 0) {
-            return true;
-        }
-        return false;
-    }
-
+    /**
+     * 根据用户ID查找用户
+     * @param id 用户ID
+     * @return User对象或null
+     */
     @Override
     public User findUserById(int id) {
         return userMapper.selectByPrimaryKey(id);
     }
 
+    /**
+     * 更新用户个人信息（由用户自己操作）
+     * @param userToUpdate 包含待更新信息的用户对象
+     * @return 更新成功返回true，否则返回false
+     */
     @Override
-    public Page<User> findUserByPage(int pageNum) {
-        List<User> users = userMapper.selectByPageNum((pageNum - 1) * 10, 10);
-        Page<User> page = new Page<>();
-        page.setList(users);
-        page.setPageNum(pageNum);
-        page.setPageSize(10);
-
-        int userCount = userMapper.selectUserCount();
-        int pageCount = userCount / 10;
-        if (userCount % 10 != 0) {
-            pageCount++;
-        }
-        page.setPageCount(pageCount);
-        return page;
+    @Transactional // 建议更新操作都加上事务注解
+    public boolean updateUserProfile(User userToUpdate) {
+        // 使用 selective 方法，只会更新 userToUpdate 对象中不为null的字段
+        // 这样可以避免将用户的密码、角色等重要信息意外置空
+        int affectedRows = userMapper.updateByPrimaryKeySelective(userToUpdate);
+        return affectedRows > 0;
     }
 
+
+    /**
+     * 用户借书（未来需要实现的业务）
+     * @param bookId 图书ID
+     * @param userId 用户ID
+     * @return 借阅成功返回true，否则返回false
+     */
     @Override
-    public int insertUser(User user) {
-        return userMapper.insert(user);
+    @Transactional
+    public boolean borrowBook(int bookId, int userId) {
+        // TODO: 实现完整的借书业务逻辑
+        // 1. 检查用户借书数量是否已达上限 (查询user表或borrow_record表)
+        // 2. 检查图书库存是否充足 (查询book_inventory表的available_copies)
+        // 3. 如果可以借，则更新book_inventory表的available_copies数量（减1）
+        // 4. 在borrow_record表中插入一条新的借阅记录，状态为'borrowed'
+        // 5. 如果以上任一步失败，则事务回滚，借书失败
+        System.out.println("用户 " + userId + " 正在尝试借阅图书 " + bookId + "（逻辑待实现）");
+        return false; // 暂时返回false
     }
 
+    /**
+     * 用户还书（未来需要实现的业务）
+     * @param bookId 图书ID
+     * @param userId 用户ID
+     * @return 归还成功返回true，否则返回false
+     */
     @Override
-    public int deleteUserById(int userId) {
-        return userMapper.deleteByPrimaryKey(userId);
+    @Transactional
+    public boolean returnBook(int bookId, int userId) {
+        // TODO: 实现完整的还书业务逻辑
+        // 1. 查找该用户对应的该图书的、状态为'borrowed'或'overdue'的借阅记录 (查询borrow_record表)
+        // 2. 如果找到记录，则更新该条记录的状态为'returned'
+        // 3. 在return_record表中插入一条新的归还记录
+        // 4. 更新book_inventory表的available_copies数量（加1）
+        // 5. 如果有逾期，可能还需要处理罚金逻辑（查询overdue_record表）
+        // 6. 如果以上任一步失败，则事务回滚，还书失败
+        System.out.println("用户 " + userId + " 正在尝试归还图书 " + bookId + "（逻辑待实现）");
+        return false; // 暂时返回false
     }
+
+    // --- 以下是旧文件中不再属于UserService职责的方法，已被移除 ---
+    // - findAllDepts() -> 已删除
+    // - findUserByPage() -> 应属于AdminService
+    // - insertUser() -> 应属于AdminService
+    // - deleteUserById() -> 应属于AdminService
+    // - findUserByUserName() -> 已被login方法内部使用，不再需要暴露为public
 }

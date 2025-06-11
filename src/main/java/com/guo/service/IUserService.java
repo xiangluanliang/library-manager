@@ -1,45 +1,66 @@
 package com.guo.service;
 
-import com.guo.domain.Department;
 import com.guo.domain.User;
-import com.guo.domain.Vo.BorrowingBooksVo;
-import com.guo.utils.page.Page;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-
+/**
+ * 用户服务接口
+ * 定义了所有与用户认证和普通用户自身相关的业务逻辑。
+ */
 public interface IUserService {
 
-    // 查询用户名 为"userName"的所有用户
-    List<User> findUserByUserName(String userName);
+    /**
+     * 用户登录验证。
+     * @param username 用户名
+     * @param password 原始密码
+     * @return 如果验证成功，返回完整的User对象；否则返回null。
+     */
+    User login(String username, String password);
 
-    //查询所有部门
-    List<Department> findAllDepts();
-
-    //用户登录
-    User userLogin(String userName, String password);
-
-    //更新用户信息
-    boolean updateUser(User user, HttpServletRequest request);
-
-    //查询用户借书记录
-    List<BorrowingBooksVo> findAllBorrowingBooks(HttpServletRequest request);
-
-    //用户还书
-    boolean userReturnBook(int bookId, HttpServletRequest request);
-
-    //用户借书 
-    boolean userBorrowingBook(int bookId, HttpServletRequest request);
-
-    //通过id查找用户
+    /**
+     * 通过用户ID查找用户。
+     * @param id 用户ID
+     * @return 找到的User对象，如果不存在则返回null。
+     */
     User findUserById(int id);
 
-    //分页查询用户
-    Page<User> findUserByPage(int pageNum);
+    /**
+     * 更新用户自己的个人信息。
+     * Service层不应依赖HttpServletRequest，所以移除该参数。
+     * @param userToUpdate 包含待更新信息的用户对象
+     * @return 更新成功返回true，失败返回false。
+     */
+    boolean updateUserProfile(User userToUpdate);
 
-    //添加用户
-    int insertUser(User user);
 
-    //根据用户id删除用户
-    int deleteUserById(int userId);
+    /**
+     * 用户借阅一本书。
+     * @param bookId 准备借阅的图书ID
+     * @param userId 执行操作的用户ID
+     * @return 借阅成功返回true，失败返回false。
+     */
+    boolean borrowBook(int bookId, int userId);
+
+    /**
+     * 用户归还一本书。
+     * @param bookId 准备归还的图书ID
+     * @param userId 执行操作的用户ID
+     * @return 归还成功返回true，失败返回false。
+     */
+    boolean returnBook(int bookId, int userId);
+
+
+    // ====================================================================
+    // 以下方法已从IUserService中移除，因为它们不属于核心用户服务职责：
+    //
+    // - findUserByUserName(String userName): 已被login方法内部消化，无需对外部暴露。
+    // - findAllDepts(): Department实体已废弃。
+    // - userLogin(String userName, String password): 被新的login方法取代。
+    // - updateUser(User user, HttpServletRequest request): 被新的updateUserProfile方法取代。
+    // - findAllBorrowingBooks(HttpServletRequest request): 功能将由新的IBorrowRecordService处理。
+    // - userReturnBook(int bookId, HttpServletRequest request): 被新的returnBook方法取代。
+    // - userBorrowingBook(int bookId, HttpServletRequest request): 被新的borrowBook方法取代。
+    // - findUserByPage(int pageNum): 这是管理员功能，应放在AdminService中。
+    // - insertUser(User user): 这是管理员功能，应放在AdminService中。
+    // - deleteUserById(int userId): 这是管理员功能，应放在AdminService中。
+    // ====================================================================
 }

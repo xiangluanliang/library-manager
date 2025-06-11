@@ -1,25 +1,44 @@
 package com.guo.service;
 
-import com.guo.domain.Vo.BookVo;
+import com.guo.domain.BookInfo;
+// 导入你的分页工具类
 import com.guo.utils.page.Page;
 
-import java.util.List;
-
+/**
+ * 图书服务接口
+ * 定义了所有与图书相关的核心业务逻辑。
+ */
 public interface IBookService {
 
     /**
-     * 根据 书籍的部分信息 去数据库中查找书籍
-     *
-     * @param partInfo
-     * @return
+     * 根据关键词搜索图书并进行分页。
+     * @param keyword 搜索关键词（可匹配书名、作者等）
+     * @param pageNum 当前页码
+     * @return 封装了图书列表和分页信息的Page对象。
      */
-    List<BookVo> selectBooksByBookPartInfo(String partInfo);
+    Page<BookInfo> searchAndPaginate(String keyword, int pageNum);
 
     /**
-     * 根据书籍种类id查找书籍,分页查找
-     *
-     * @param categoryId
-     * @return
+     * 新增一本图书。
+     * 这个操作需要同时向book_info表和book_inventory表写入数据。
+     * @param bookInfo 包含图书基本信息的对象
+     * @param totalCopies 要入库的总数量
+     * @return 添加成功返回true，失败返回false。
      */
-    Page<BookVo> findBooksByCategoryId(int categoryId, int pageNum);
+    boolean addNewBook(BookInfo bookInfo, int totalCopies);
+
+    /**
+     * 根据ID删除一本图书。
+     * @param bookId 要删除的图书ID
+     * @return 删除成功返回true，失败返回false。
+     */
+    boolean deleteBookById(int bookId);
+
+    /**
+     * 根据ID查找一本图书的详细信息。
+     * @param bookId 图书ID
+     * @return BookInfo对象，不存在则返回null。
+     */
+    BookInfo findBookById(int bookId);
+
 }

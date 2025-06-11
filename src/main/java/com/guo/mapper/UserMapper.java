@@ -29,9 +29,10 @@ public interface UserMapper {
 
     int updateByPrimaryKey(User record);
 
-    //分页查询
-    List<User> selectByPageNum(@Param("currIndex") int currIndex, @Param("pageSize") int pageSize);
-
-    //查询总数
-    int selectUserCount();
+    /**
+     * 根据用户名查询用户
+     * @param userName 用户名
+     * @return 完整的用户信息，包括角色
+     */
+    User findByUsername(@Param("username") String userName);
 }

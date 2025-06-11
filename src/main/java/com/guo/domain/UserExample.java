@@ -1,6 +1,7 @@
 package com.guo.domain;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class UserExample {
@@ -11,7 +12,7 @@ public class UserExample {
     protected List<Criteria> oredCriteria;
 
     public UserExample() {
-        oredCriteria = new ArrayList<Criteria>();
+        oredCriteria = new ArrayList<>();
     }
 
     public void setOrderByClause(String orderByClause) {
@@ -68,7 +69,7 @@ public class UserExample {
 
         protected GeneratedCriteria() {
             super();
-            criteria = new ArrayList<Criterion>();
+            criteria = new ArrayList<>();
         }
 
         public boolean isValid() {
@@ -373,10 +374,199 @@ public class UserExample {
             addCriterion("user_email not between", value1, value2, "userEmail");
             return (Criteria) this;
         }
+
+        public Criteria andMaxBorrowIsNull() {
+            addCriterion("max_borrow is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaxBorrowIsNotNull() {
+            addCriterion("max_borrow is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaxBorrowEqualTo(Integer value) {
+            addCriterion("max_borrow =", value, "maxBorrow");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaxBorrowNotEqualTo(Integer value) {
+            addCriterion("max_borrow <>", value, "maxBorrow");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaxBorrowGreaterThan(Integer value) {
+            addCriterion("max_borrow >", value, "maxBorrow");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaxBorrowGreaterThanOrEqualTo(Integer value) {
+            addCriterion("max_borrow >=", value, "maxBorrow");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaxBorrowLessThan(Integer value) {
+            addCriterion("max_borrow <", value, "maxBorrow");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaxBorrowLessThanOrEqualTo(Integer value) {
+            addCriterion("max_borrow <=", value, "maxBorrow");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaxBorrowIn(List<Integer> values) {
+            addCriterion("max_borrow in", values, "maxBorrow");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaxBorrowNotIn(List<Integer> values) {
+            addCriterion("max_borrow not in", values, "maxBorrow");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaxBorrowBetween(Integer value1, Integer value2) {
+            addCriterion("max_borrow between", value1, value2, "maxBorrow");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaxBorrowNotBetween(Integer value1, Integer value2) {
+            addCriterion("max_borrow not between", value1, value2, "maxBorrow");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoleIsNull() {
+            addCriterion("role is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoleIsNotNull() {
+            addCriterion("role is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoleEqualTo(String value) {
+            addCriterion("role =", value, "role");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoleNotEqualTo(String value) {
+            addCriterion("role <>", value, "role");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoleGreaterThan(String value) {
+            addCriterion("role >", value, "role");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoleGreaterThanOrEqualTo(String value) {
+            addCriterion("role >=", value, "role");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoleLessThan(String value) {
+            addCriterion("role <", value, "role");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoleLessThanOrEqualTo(String value) {
+            addCriterion("role <=", value, "role");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoleLike(String value) {
+            addCriterion("role like", value, "role");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoleNotLike(String value) {
+            addCriterion("role not like", value, "role");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoleIn(List<String> values) {
+            addCriterion("role in", values, "role");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoleNotIn(List<String> values) {
+            addCriterion("role not in", values, "role");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoleBetween(String value1, String value2) {
+            addCriterion("role between", value1, value2, "role");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoleNotBetween(String value1, String value2) {
+            addCriterion("role not between", value1, value2, "role");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreationTimeIsNull() {
+            addCriterion("creation_time is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreationTimeIsNotNull() {
+            addCriterion("creation_time is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreationTimeEqualTo(Date value) {
+            addCriterion("creation_time =", value, "creationTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreationTimeNotEqualTo(Date value) {
+            addCriterion("creation_time <>", value, "creationTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreationTimeGreaterThan(Date value) {
+            addCriterion("creation_time >", value, "creationTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreationTimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("creation_time >=", value, "creationTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreationTimeLessThan(Date value) {
+            addCriterion("creation_time <", value, "creationTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreationTimeLessThanOrEqualTo(Date value) {
+            addCriterion("creation_time <=", value, "creationTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreationTimeIn(List<Date> values) {
+            addCriterion("creation_time in", values, "creationTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreationTimeNotIn(List<Date> values) {
+            addCriterion("creation_time not in", values, "creationTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreationTimeBetween(Date value1, Date value2) {
+            addCriterion("creation_time between", value1, value2, "creationTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreationTimeNotBetween(Date value1, Date value2) {
+            addCriterion("creation_time not between", value1, value2, "creationTime");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {
-
         protected Criteria() {
             super();
         }

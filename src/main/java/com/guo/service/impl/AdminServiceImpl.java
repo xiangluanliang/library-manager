@@ -1,100 +1,94 @@
 package com.guo.service.impl;
 
-import com.guo.domain.*;
-import com.guo.mapper.AdminMapper;
-import com.guo.mapper.BookCategoryMapper;
-import com.guo.mapper.BookMapper;
+import com.guo.domain.User;
+import com.guo.mapper.UserMapper;
 import com.guo.service.IAdminService;
+import com.guo.utils.page.Page;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
+/**
+ * 管理员服务实现类
+ */
 @Service
 public class AdminServiceImpl implements IAdminService {
 
     @Resource
-    private AdminMapper adminMapper;
+    private UserMapper userMapper;
 
-    @Resource
-    private BookMapper bookMapper;
+    // 引入密码编码器，用于对新用户的密码进行加密
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    @Resource
-    private BookCategoryMapper bookCategoryMapper;
-
+    /**
+     * (管理员操作) 分页查询所有用户。
+     * @param pageNum 当前页码
+     * @return 封装好的分页对象
+     */
     @Override
-    public boolean adminIsExist(String name) {
-        AdminExample adminExample = new AdminExample();
-        AdminExample.Criteria criteria = adminExample.createCriteria();
-        criteria.andAdminNameEqualTo(name);
-        List<Admin> admin = adminMapper.selectByExample(adminExample);
-        if (null == admin)
-            return false;
-        if (admin.size() < 1) {
-            return false;
-        }
-        return true;
+    public Page<User> findAllUsersByPage(int pageNum) {
+        // TODO: 此处需要你根据你自己的分页工具类(Page)和UserMapper进行实现。
+        // 下面是一个通用的实现逻辑示例，你需要替换成你自己的方法。
+
+        Page<User> page = new Page<>();
+        int pageSize = 10; // 假设每页10条
+        int offset = (pageNum - 1) * pageSize;
+
+        // 1. 查询当前页的用户列表 (你需要在UserMapper.xml中创建一个带LIMIT和OFFSET的查询)
+        // List<User> users = userMapper.selectAllUsersWithLimit(offset, pageSize);
+        // page.setList(users);
+
+        // 2. 查询用户总数
+        // long totalCount = userMapper.countByExample(new UserExample());
+        // page.setTotalCount(totalCount);
+
+        // 3. 设置其他分页参数
+        // page.setPageNum(pageNum);
+        // page.setPageSize(pageSize);
+        // ...
+
+        // 暂时返回一个空的分页对象，防止控制器报错
+        System.out.println("正在查询所有用户，分页逻辑待实现...");
+        return page;
     }
 
+    /**
+     * (管理员操作) 新增一个用户。
+     * @param newUser 包含新用户信息的用户对象
+     * @return 添加成功返回true
+     */
     @Override
-    public Admin adminLogin(String name, String password) {
-
-        AdminExample adminExample = new AdminExample();
-        AdminExample.Criteria criteria = adminExample.createCriteria();
-        criteria.andAdminNameEqualTo(name);
-        List<Admin> admin = adminMapper.selectByExample(adminExample);
-
-        if (null == admin) {
-            return null;
+    @Transactional
+    public boolean addNewUser(User newUser) {
+        // 安全检查：防止添加一个已存在的用户名
+        if (userMapper.findByUsername(newUser.getUserName()) != null) {
+            return false; // 用户名已存在
         }
-        
-        for (Admin a : admin) {
-            if (a.getAdminPwd().equals(password)) {
-                return a;
-            }
-        }
-        return null;
+
+        // 核心安全步骤：对用户的明文密码进行加密
+        String encodedPassword = passwordEncoder.encode(newUser.getUserPwd());
+        newUser.setUserPwd(encodedPassword);
+
+        // 插入数据库，使用selective方法更安全
+        int affectedRows = userMapper.insertSelective(newUser);
+
+        return affectedRows > 0;
     }
 
+    /**
+     * (管理员操作) 根据ID删除用户。
+     * @param userId 要删除的用户ID
+     * @return 删除成功返回true
+     */
     @Override
-    public boolean addBook(Book book) {
-        int n = bookMapper.insert(book);
-        if (n > 0) {
-            return true;
-        }
-        return false;
-    }
+    @Transactional
+    public boolean deleteUserById(int userId) {
+        // TODO: 在删除用户前，可能需要先处理该用户相关的借阅记录等，以避免违反数据库外键约束。
+        // 这是一个复杂的业务，暂时先只做删除用户本身的操作。
 
-    @Override
-    public List<BookCategory> getBookCategories() {
-        BookCategoryExample bookCategoryExample = new BookCategoryExample();
-        return bookCategoryMapper.selectByExample(bookCategoryExample);
-    }
-
-    @Override
-    public boolean addBookCategory(BookCategory bookCategory) {
-        int n = bookCategoryMapper.insert(bookCategory);
-        if (n > 0) {
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean updateAdmin(Admin admin, HttpServletRequest request) {
-        //获取session对象中admin对象
-        Admin sessionAdmin = (Admin) request.getSession().getAttribute("admin");
-        admin.setAdminId(sessionAdmin.getAdminId());
-        int n = adminMapper.updateByPrimaryKey(admin);
-
-        if (n > 0) {
-            //修改成功，更新session对象
-            Admin newAdmin = adminMapper.selectByPrimaryKey(admin.getAdminId());
-            request.getSession().setAttribute("admin", newAdmin);
-            return true;
-        }
-
-        return false;
+        int affectedRows = userMapper.deleteByPrimaryKey(userId);
+        return affectedRows > 0;
     }
 }

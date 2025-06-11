@@ -53,7 +53,7 @@ INSERT INTO
 VALUES (
            1,
            'admin',
-           '$2a$10$E.qJ0S0jJcZ8Qz8Qz8Qz8.E.qJ0S0jJcZ8Qz8Qz8Qz8Q',
+           'admin',
            'admin@example.com',
            99,
            'admin'
@@ -61,7 +61,7 @@ VALUES (
        (
            2,
            'zhangsan',
-           '$2a$10$E.qJ0S0jJcZ8Qz8Qz8Qz8.E.qJ0S0jJcZ8Qz8Qz8Qz8Q',
+           '123456',
            'zhangsan@example.com',
            5,
            'user'
@@ -69,7 +69,7 @@ VALUES (
        (
            3,
            'lisi',
-           '$2a$10$E.qJ0S0jJcZ8Qz8Qz8Qz8.E.qJ0S0jJcZ8Qz8Qz8Qz8Q',
+           '123456',
            'lisi@example.com',
            5,
            'user'
@@ -77,7 +77,7 @@ VALUES (
        (
            4,
            'wangwu',
-           '$2a$10$E.qJ0S0jJcZ8Qz8Qz8Qz8.E.qJ0S0jJcZ8Qz8Qz8Qz8Q',
+           '123456',
            'wangwu@example.com',
            3,
            'user'

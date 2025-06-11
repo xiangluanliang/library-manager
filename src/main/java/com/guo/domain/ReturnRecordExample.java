@@ -2,19 +2,17 @@ package com.guo.domain;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
-
-public class BorrowingBooksExample {
+public class ReturnRecordExample {
     protected String orderByClause;
 
     protected boolean distinct;
 
     protected List<Criteria> oredCriteria;
 
-    public BorrowingBooksExample() {
-        oredCriteria = new ArrayList<Criteria>();
+    public ReturnRecordExample() {
+        oredCriteria = new ArrayList<>();
     }
 
     public void setOrderByClause(String orderByClause) {
@@ -71,7 +69,7 @@ public class BorrowingBooksExample {
 
         protected GeneratedCriteria() {
             super();
-            criteria = new ArrayList<Criterion>();
+            criteria = new ArrayList<>();
         }
 
         public boolean isValid() {
@@ -107,275 +105,248 @@ public class BorrowingBooksExample {
             criteria.add(new Criterion(condition, value1, value2));
         }
 
-        protected void addCriterionForJDBCDate(String condition, Date value, String property) {
-            if (value == null) {
-                throw new RuntimeException("Value for " + property + " cannot be null");
-            }
-            addCriterion(condition, new java.sql.Date(value.getTime()), property);
-        }
-
-        protected void addCriterionForJDBCDate(String condition, List<Date> values, String property) {
-            if (values == null || values.size() == 0) {
-                throw new RuntimeException("Value list for " + property + " cannot be null or empty");
-            }
-            List<java.sql.Date> dateList = new ArrayList<java.sql.Date>();
-            Iterator<Date> iter = values.iterator();
-            while (iter.hasNext()) {
-                dateList.add(new java.sql.Date(iter.next().getTime()));
-            }
-            addCriterion(condition, dateList, property);
-        }
-
-        protected void addCriterionForJDBCDate(String condition, Date value1, Date value2, String property) {
-            if (value1 == null || value2 == null) {
-                throw new RuntimeException("Between values for " + property + " cannot be null");
-            }
-            addCriterion(condition, new java.sql.Date(value1.getTime()), new java.sql.Date(value2.getTime()), property);
-        }
-
-        public Criteria andIdIsNull() {
-            addCriterion("id is null");
+        public Criteria andReturnIdIsNull() {
+            addCriterion("return_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andIdIsNotNull() {
-            addCriterion("id is not null");
+        public Criteria andReturnIdIsNotNull() {
+            addCriterion("return_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andIdEqualTo(Integer value) {
-            addCriterion("id =", value, "id");
+        public Criteria andReturnIdEqualTo(Integer value) {
+            addCriterion("return_id =", value, "returnId");
             return (Criteria) this;
         }
 
-        public Criteria andIdNotEqualTo(Integer value) {
-            addCriterion("id <>", value, "id");
+        public Criteria andReturnIdNotEqualTo(Integer value) {
+            addCriterion("return_id <>", value, "returnId");
             return (Criteria) this;
         }
 
-        public Criteria andIdGreaterThan(Integer value) {
-            addCriterion("id >", value, "id");
+        public Criteria andReturnIdGreaterThan(Integer value) {
+            addCriterion("return_id >", value, "returnId");
             return (Criteria) this;
         }
 
-        public Criteria andIdGreaterThanOrEqualTo(Integer value) {
-            addCriterion("id >=", value, "id");
+        public Criteria andReturnIdGreaterThanOrEqualTo(Integer value) {
+            addCriterion("return_id >=", value, "returnId");
             return (Criteria) this;
         }
 
-        public Criteria andIdLessThan(Integer value) {
-            addCriterion("id <", value, "id");
+        public Criteria andReturnIdLessThan(Integer value) {
+            addCriterion("return_id <", value, "returnId");
             return (Criteria) this;
         }
 
-        public Criteria andIdLessThanOrEqualTo(Integer value) {
-            addCriterion("id <=", value, "id");
+        public Criteria andReturnIdLessThanOrEqualTo(Integer value) {
+            addCriterion("return_id <=", value, "returnId");
             return (Criteria) this;
         }
 
-        public Criteria andIdIn(List<Integer> values) {
-            addCriterion("id in", values, "id");
+        public Criteria andReturnIdIn(List<Integer> values) {
+            addCriterion("return_id in", values, "returnId");
             return (Criteria) this;
         }
 
-        public Criteria andIdNotIn(List<Integer> values) {
-            addCriterion("id not in", values, "id");
+        public Criteria andReturnIdNotIn(List<Integer> values) {
+            addCriterion("return_id not in", values, "returnId");
             return (Criteria) this;
         }
 
-        public Criteria andIdBetween(Integer value1, Integer value2) {
-            addCriterion("id between", value1, value2, "id");
+        public Criteria andReturnIdBetween(Integer value1, Integer value2) {
+            addCriterion("return_id between", value1, value2, "returnId");
             return (Criteria) this;
         }
 
-        public Criteria andIdNotBetween(Integer value1, Integer value2) {
-            addCriterion("id not between", value1, value2, "id");
+        public Criteria andReturnIdNotBetween(Integer value1, Integer value2) {
+            addCriterion("return_id not between", value1, value2, "returnId");
             return (Criteria) this;
         }
 
-        public Criteria andUserIdIsNull() {
-            addCriterion("user_id is null");
+        public Criteria andBorrowIdIsNull() {
+            addCriterion("borrow_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andUserIdIsNotNull() {
-            addCriterion("user_id is not null");
+        public Criteria andBorrowIdIsNotNull() {
+            addCriterion("borrow_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andUserIdEqualTo(Integer value) {
-            addCriterion("user_id =", value, "userId");
+        public Criteria andBorrowIdEqualTo(Integer value) {
+            addCriterion("borrow_id =", value, "borrowId");
             return (Criteria) this;
         }
 
-        public Criteria andUserIdNotEqualTo(Integer value) {
-            addCriterion("user_id <>", value, "userId");
+        public Criteria andBorrowIdNotEqualTo(Integer value) {
+            addCriterion("borrow_id <>", value, "borrowId");
             return (Criteria) this;
         }
 
-        public Criteria andUserIdGreaterThan(Integer value) {
-            addCriterion("user_id >", value, "userId");
+        public Criteria andBorrowIdGreaterThan(Integer value) {
+            addCriterion("borrow_id >", value, "borrowId");
             return (Criteria) this;
         }
 
-        public Criteria andUserIdGreaterThanOrEqualTo(Integer value) {
-            addCriterion("user_id >=", value, "userId");
+        public Criteria andBorrowIdGreaterThanOrEqualTo(Integer value) {
+            addCriterion("borrow_id >=", value, "borrowId");
             return (Criteria) this;
         }
 
-        public Criteria andUserIdLessThan(Integer value) {
-            addCriterion("user_id <", value, "userId");
+        public Criteria andBorrowIdLessThan(Integer value) {
+            addCriterion("borrow_id <", value, "borrowId");
             return (Criteria) this;
         }
 
-        public Criteria andUserIdLessThanOrEqualTo(Integer value) {
-            addCriterion("user_id <=", value, "userId");
+        public Criteria andBorrowIdLessThanOrEqualTo(Integer value) {
+            addCriterion("borrow_id <=", value, "borrowId");
             return (Criteria) this;
         }
 
-        public Criteria andUserIdIn(List<Integer> values) {
-            addCriterion("user_id in", values, "userId");
+        public Criteria andBorrowIdIn(List<Integer> values) {
+            addCriterion("borrow_id in", values, "borrowId");
             return (Criteria) this;
         }
 
-        public Criteria andUserIdNotIn(List<Integer> values) {
-            addCriterion("user_id not in", values, "userId");
+        public Criteria andBorrowIdNotIn(List<Integer> values) {
+            addCriterion("borrow_id not in", values, "borrowId");
             return (Criteria) this;
         }
 
-        public Criteria andUserIdBetween(Integer value1, Integer value2) {
-            addCriterion("user_id between", value1, value2, "userId");
+        public Criteria andBorrowIdBetween(Integer value1, Integer value2) {
+            addCriterion("borrow_id between", value1, value2, "borrowId");
             return (Criteria) this;
         }
 
-        public Criteria andUserIdNotBetween(Integer value1, Integer value2) {
-            addCriterion("user_id not between", value1, value2, "userId");
+        public Criteria andBorrowIdNotBetween(Integer value1, Integer value2) {
+            addCriterion("borrow_id not between", value1, value2, "borrowId");
             return (Criteria) this;
         }
 
-        public Criteria andBookIdIsNull() {
-            addCriterion("book_id is null");
+        public Criteria andReturnTimeIsNull() {
+            addCriterion("return_time is null");
             return (Criteria) this;
         }
 
-        public Criteria andBookIdIsNotNull() {
-            addCriterion("book_id is not null");
+        public Criteria andReturnTimeIsNotNull() {
+            addCriterion("return_time is not null");
             return (Criteria) this;
         }
 
-        public Criteria andBookIdEqualTo(Integer value) {
-            addCriterion("book_id =", value, "bookId");
+        public Criteria andReturnTimeEqualTo(Date value) {
+            addCriterion("return_time =", value, "returnTime");
             return (Criteria) this;
         }
 
-        public Criteria andBookIdNotEqualTo(Integer value) {
-            addCriterion("book_id <>", value, "bookId");
+        public Criteria andReturnTimeNotEqualTo(Date value) {
+            addCriterion("return_time <>", value, "returnTime");
             return (Criteria) this;
         }
 
-        public Criteria andBookIdGreaterThan(Integer value) {
-            addCriterion("book_id >", value, "bookId");
+        public Criteria andReturnTimeGreaterThan(Date value) {
+            addCriterion("return_time >", value, "returnTime");
             return (Criteria) this;
         }
 
-        public Criteria andBookIdGreaterThanOrEqualTo(Integer value) {
-            addCriterion("book_id >=", value, "bookId");
+        public Criteria andReturnTimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("return_time >=", value, "returnTime");
             return (Criteria) this;
         }
 
-        public Criteria andBookIdLessThan(Integer value) {
-            addCriterion("book_id <", value, "bookId");
+        public Criteria andReturnTimeLessThan(Date value) {
+            addCriterion("return_time <", value, "returnTime");
             return (Criteria) this;
         }
 
-        public Criteria andBookIdLessThanOrEqualTo(Integer value) {
-            addCriterion("book_id <=", value, "bookId");
+        public Criteria andReturnTimeLessThanOrEqualTo(Date value) {
+            addCriterion("return_time <=", value, "returnTime");
             return (Criteria) this;
         }
 
-        public Criteria andBookIdIn(List<Integer> values) {
-            addCriterion("book_id in", values, "bookId");
+        public Criteria andReturnTimeIn(List<Date> values) {
+            addCriterion("return_time in", values, "returnTime");
             return (Criteria) this;
         }
 
-        public Criteria andBookIdNotIn(List<Integer> values) {
-            addCriterion("book_id not in", values, "bookId");
+        public Criteria andReturnTimeNotIn(List<Date> values) {
+            addCriterion("return_time not in", values, "returnTime");
             return (Criteria) this;
         }
 
-        public Criteria andBookIdBetween(Integer value1, Integer value2) {
-            addCriterion("book_id between", value1, value2, "bookId");
+        public Criteria andReturnTimeBetween(Date value1, Date value2) {
+            addCriterion("return_time between", value1, value2, "returnTime");
             return (Criteria) this;
         }
 
-        public Criteria andBookIdNotBetween(Integer value1, Integer value2) {
-            addCriterion("book_id not between", value1, value2, "bookId");
+        public Criteria andReturnTimeNotBetween(Date value1, Date value2) {
+            addCriterion("return_time not between", value1, value2, "returnTime");
             return (Criteria) this;
         }
 
-        public Criteria andDateIsNull() {
-            addCriterion("date is null");
+        public Criteria andOperatorIdIsNull() {
+            addCriterion("operator_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andDateIsNotNull() {
-            addCriterion("date is not null");
+        public Criteria andOperatorIdIsNotNull() {
+            addCriterion("operator_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andDateEqualTo(Date value) {
-            addCriterionForJDBCDate("date =", value, "date");
+        public Criteria andOperatorIdEqualTo(Integer value) {
+            addCriterion("operator_id =", value, "operatorId");
             return (Criteria) this;
         }
 
-        public Criteria andDateNotEqualTo(Date value) {
-            addCriterionForJDBCDate("date <>", value, "date");
+        public Criteria andOperatorIdNotEqualTo(Integer value) {
+            addCriterion("operator_id <>", value, "operatorId");
             return (Criteria) this;
         }
 
-        public Criteria andDateGreaterThan(Date value) {
-            addCriterionForJDBCDate("date >", value, "date");
+        public Criteria andOperatorIdGreaterThan(Integer value) {
+            addCriterion("operator_id >", value, "operatorId");
             return (Criteria) this;
         }
 
-        public Criteria andDateGreaterThanOrEqualTo(Date value) {
-            addCriterionForJDBCDate("date >=", value, "date");
+        public Criteria andOperatorIdGreaterThanOrEqualTo(Integer value) {
+            addCriterion("operator_id >=", value, "operatorId");
             return (Criteria) this;
         }
 
-        public Criteria andDateLessThan(Date value) {
-            addCriterionForJDBCDate("date <", value, "date");
+        public Criteria andOperatorIdLessThan(Integer value) {
+            addCriterion("operator_id <", value, "operatorId");
             return (Criteria) this;
         }
 
-        public Criteria andDateLessThanOrEqualTo(Date value) {
-            addCriterionForJDBCDate("date <=", value, "date");
+        public Criteria andOperatorIdLessThanOrEqualTo(Integer value) {
+            addCriterion("operator_id <=", value, "operatorId");
             return (Criteria) this;
         }
 
-        public Criteria andDateIn(List<Date> values) {
-            addCriterionForJDBCDate("date in", values, "date");
+        public Criteria andOperatorIdIn(List<Integer> values) {
+            addCriterion("operator_id in", values, "operatorId");
             return (Criteria) this;
         }
 
-        public Criteria andDateNotIn(List<Date> values) {
-            addCriterionForJDBCDate("date not in", values, "date");
+        public Criteria andOperatorIdNotIn(List<Integer> values) {
+            addCriterion("operator_id not in", values, "operatorId");
             return (Criteria) this;
         }
 
-        public Criteria andDateBetween(Date value1, Date value2) {
-            addCriterionForJDBCDate("date between", value1, value2, "date");
+        public Criteria andOperatorIdBetween(Integer value1, Integer value2) {
+            addCriterion("operator_id between", value1, value2, "operatorId");
             return (Criteria) this;
         }
 
-        public Criteria andDateNotBetween(Date value1, Date value2) {
-            addCriterionForJDBCDate("date not between", value1, value2, "date");
+        public Criteria andOperatorIdNotBetween(Integer value1, Integer value2) {
+            addCriterion("operator_id not between", value1, value2, "operatorId");
             return (Criteria) this;
         }
     }
 
     public static class Criteria extends GeneratedCriteria {
-
         protected Criteria() {
             super();
         }

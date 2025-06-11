@@ -125,11 +125,7 @@
             return false;
         }
 
-        if (role_id == "1") {
-            $("#my_form").attr("action", "/userLogin").submit();
-        } else {
-            $("#my_form").attr("action", "/adminLogin").submit();
-        }
+        $("#my_form").attr("action", "/login").submit();
     });
 </script>
 
