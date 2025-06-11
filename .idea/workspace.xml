@@ -5,66 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6b87cd2c-56d3-45c6-8dd2-f2335b7061d4" name="Default Changelist" comment="ui修正">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/zbw/DemoApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/guo/DemoApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/zbw/controller/AdminController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/guo/controller/AdminController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/zbw/controller/BookController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/guo/controller/BookController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/zbw/controller/BorrowingController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/guo/controller/BorrowingController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/zbw/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/guo/controller/UserController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/zbw/domain/Admin.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/guo/domain/Admin.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/zbw/domain/AdminExample.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/guo/domain/AdminExample.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/zbw/domain/Book.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/guo/domain/Book.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/zbw/domain/BookCategory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/guo/domain/BookCategory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/zbw/domain/BookCategoryExample.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/guo/domain/BookCategoryExample.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/zbw/domain/BookExample.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/guo/domain/BookExample.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/zbw/domain/BorrowingBooks.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/guo/domain/BorrowingBooks.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/zbw/domain/BorrowingBooksExample.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/guo/domain/BorrowingBooksExample.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/zbw/domain/Department.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/guo/domain/Department.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/zbw/domain/DepartmentExample.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/guo/domain/DepartmentExample.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/zbw/domain/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/guo/domain/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/zbw/domain/UserExample.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/guo/domain/UserExample.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/zbw/domain/Vo/BookVo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/guo/domain/Vo/BookVo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/zbw/domain/Vo/BorrowingBooksVo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/guo/domain/Vo/BorrowingBooksVo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/zbw/mapper/AdminMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/guo/mapper/AdminMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/zbw/mapper/BookCategoryMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/guo/mapper/BookCategoryMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/zbw/mapper/BookMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/guo/mapper/BookMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/zbw/mapper/BorrowingBooksMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/guo/mapper/BorrowingBooksMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/zbw/mapper/DepartmentMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/guo/mapper/DepartmentMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/zbw/mapper/UserMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/guo/mapper/UserMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/zbw/service/IAdminService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/guo/service/IAdminService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/zbw/service/IBookCategoryService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/guo/service/IBookCategoryService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/zbw/service/IBookService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/guo/service/IBookService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/zbw/service/IBorrowingBooksRecordService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/guo/service/IBorrowingBooksRecordService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/zbw/service/IUserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/guo/service/IUserService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/zbw/service/impl/AdminServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/guo/service/impl/AdminServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/zbw/service/impl/BookCategoryServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/guo/service/impl/BookCategoryServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/zbw/service/impl/BookServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/guo/service/impl/BookServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/zbw/service/impl/BorrowingBooksRecordServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/guo/service/impl/BorrowingBooksRecordServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/zbw/service/impl/UserServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/guo/service/impl/UserServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/zbw/utils/page/Page.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/guo/utils/page/Page.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/db/library-manager-system.sql" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/db/library-manager-system.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/mapper/AdminMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/mapper/AdminMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/mapper/BookCategoryMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/mapper/BookCategoryMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/mapper/BookMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/mapper/BookMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/mapper/BorrowingBooksMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/mapper/BorrowingBooksMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/mapper/DepartmentMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/mapper/DepartmentMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/mapper/UserMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/mapper/UserMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/zbw/BookCategoryMapperTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/guo/BookCategoryMapperTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/zbw/BookServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/guo/BookServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/zbw/BorrowingBooksMapperTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/guo/BorrowingBooksMapperTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/zbw/DemoApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/guo/DemoApplicationTests.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/zbw/TestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/guo/TestController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/zbw/UserTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/guo/UserTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/db/library-manager-system.sql" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/db/library-manager-system.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mapper/AdminMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mapper/AdminMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mapper/BookCategoryMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mapper/BookCategoryMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mapper/BookMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mapper/BookMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mapper/BorrowingBooksMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mapper/BorrowingBooksMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mapper/DepartmentMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mapper/DepartmentMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mapper/UserMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mapper/UserMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/images/background.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -236,6 +185,7 @@
       <workItem from="1749223318948" duration="674000" />
       <workItem from="1749614060583" duration="2466000" />
       <workItem from="1749621693869" duration="4881000" />
+      <workItem from="1749631382704" duration="343000" />
     </task>
     <task id="LOCAL-00001" summary="ui修正">
       <option name="closed" value="true" />
