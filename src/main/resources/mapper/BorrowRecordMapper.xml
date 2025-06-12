@@ -142,6 +142,13 @@
   <select id="countAll" resultType="java.lang.Long">
     SELECT COUNT(*) FROM borrow_record
   </select>
+  <!-- 统计某本书未归还的借阅记录数量 -->
+  <select id="countOutstandingByBookId" parameterType="int" resultType="long">
+    SELECT COUNT(*)
+    FROM borrow_record
+    WHERE book_id = #{bookId}
+      AND status NOT IN ('returned')
+  </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />

@@ -27,4 +27,7 @@ public interface BookInventoryMapper {
     int updateByPrimaryKeySelective(BookInventory record);
 
     int updateByPrimaryKey(BookInventory record);
+
+    // 根据图书ID删除库存记录
+    int deleteByBookId(@Param("bookId") int bookId);
 }

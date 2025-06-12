@@ -4,6 +4,7 @@ import com.guo.domain.BookInfo;
 import com.guo.domain.BookInventory;
 import com.guo.mapper.BookInfoMapper;
 import com.guo.mapper.BookInventoryMapper;
+import com.guo.mapper.BorrowRecordMapper;
 import com.guo.service.IBookService;
 import com.guo.utils.page.Page;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,7 @@ public class BookServiceImpl implements IBookService {
     private BookInventoryMapper bookInventoryMapper;
 
     // @Resource
-    // private BorrowRecordMapper borrowRecordMapper;
+    private BorrowRecordMapper borrowRecordMapper;
 
     /**
      * 根据关键词搜索图书并分页。
@@ -106,23 +107,22 @@ public class BookServiceImpl implements IBookService {
     @Override
     @Transactional
     public boolean deleteBookById(int bookId) {
-        // TODO: 实现完整的删除业务逻辑
         // 1. 检查这本书是否还有未归还的借阅记录，如果有，则不允许删除。
-        // long outstandingBorrows = borrowRecordMapper.countOutstandingByBookId(bookId);
-        // if (outstandingBorrows > 0) {
-        //     System.out.println("无法删除，该书尚有未归还的借阅记录。");
-        //     return false;
-        // }
+        long outstandingBorrows = borrowRecordMapper.countOutstandingByBookId(bookId);
+        if (outstandingBorrows > 0) {
+            System.out.println("无法删除，该书尚有未归还的借阅记录。");
+            return false;
+        }
 
         // 2. 删除库存记录。为了避免外键约束问题，先删除子表记录。
-        //    你需要在BookInventoryMapper中创建一个deleteByBookId方法。
-        // bookInventoryMapper.deleteByBookId(bookId);
+        bookInventoryMapper.deleteByBookId(bookId);
 
         // 3. 删除图书基本信息
         int affectedRows = bookInfoMapper.deleteByPrimaryKey(bookId);
 
         return affectedRows > 0;
     }
+
 
     /**
      * 根据ID查找一本图书。
