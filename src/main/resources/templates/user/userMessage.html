@@ -1,92 +1,128 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>普通用户-图书管理系统</title>
-    <link href="/layui/css/layui.css" rel="stylesheet"/>
-
+    <title>个人信息 - 图书管理系统</title>
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}">
+    <style>
+        .main-container { padding: 30px; }
+        .info-panel { padding: 30px; background-color: #fff; border-radius: 8px; max-width: 800px; margin: 20px auto; }
+        .layui-table th { width: 120px; text-align: right; }
+        .layui-table td { text-align: left; }
+    </style>
 </head>
-<body class="layui-layout-body">
+<body class="layui-layout-body" style="background-color: #f2f2f2;">
 
 <div class="layui-layout layui-layout-admin">
 
     <div th:include="common/header :: header"></div>
-
     <div th:include="user/sidebar :: sidebar('userInfo')"></div>
 
-    <div class="layui-body layui-container">
+    <div class="layui-body main-container">
+        <div class="info-panel">
+            <h2 style="text-align: center; margin-bottom: 20px;">我的个人信息</h2>
+            <hr>
 
-        <hr class="layui-bg-blue">
-        <h3 style="font-size: xx-large; text-align: center"> 个 人 信 息 </h3>
-        <hr class="layui-bg-blue">
+            <div th:if="${message}" class="layui-alert layui-alert-success" th:text="${message}"></div>
+            <div th:if="${error}" class="layui-alert layui-alert-danger" th:text="${error}"></div>
 
-        <div class="layui-row">
-            <div class="layui-col-md8 layui-col-lg-offset2">
-                <table class="layui-table">
-                    <thead>
-                    <tr>
-                        <th>用户id</th>
-                        <th>用户姓名</th>
-                        <th>用户邮箱</th>
-                        <th>用户密码</th>
-                    </tr>
-                    </thead>
+            <table class="layui-table">
+                <colgroup>
+                    <col width="150">
+                    <col>
+                </colgroup>
+                <tbody>
+                <tr>
+                    <th>用户ID</th>
+                    <td th:text="${profileUser.userId}"></td>
+                </tr>
+                <tr>
+                    <th>用户名</th>
+                    <td th:text="${profileUser.userName}"></td>
+                </tr>
+                <tr>
+                    <th>用户邮箱</th>
+                    <td th:text="${profileUser.userEmail}"></td>
+                </tr>
+                <tr>
+                    <th>角色</th>
+                    <td>
+                        <span th:if="${profileUser.role == 'admin'}" class="layui-badge layui-bg-red">管理员</span>
+                        <span th:if="${profileUser.role == 'user'}" class="layui-badge layui-bg-blue">普通用户</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th>最大借阅数</th>
+                    <td th:text="${profileUser.maxBorrow}"></td>
+                </tr>
+                </tbody>
+            </table>
 
-                    <tr>
-                        <td><b th:text="${session.user.getUserId()}"></b></td>
-                        <td><b th:text="${session.user.getUserName()}"></b></td>
-                        <td><b th:text="${session.user.getUserEmail()}"></b></td>
-                        <td><b th:text="${session.user.getUserPwd()}"></b></td>
-                    </tr>
-                </table>
+            <div class.="layui-row" style="text-align: center; margin-top: 30px;">
+                <button id="btn-modify" class="layui-btn layui-btn-normal">修改信息</button>
             </div>
-        </div>
 
-        <div class="layui-row">
-            <button id="modify-user" class="layui-btn" style="display: block; margin: 10px auto;">修改信息</button>
-        </div>
+            <div id="modify-form-container" style="display: none; padding: 20px;">
+                <form id="updateUserForm" class="layui-form" lay-filter="updateForm" method="post" th:action="@{/user/profile/update}">
+                    <input type="hidden" name="userId" th:value="${profileUser.userId}">
 
-        <div id="window" title="修改信息" style="margin: 5%; display: none">
-            <form id="updateUserForm" class="layui-form">
-                <div class="layui-form-item">
-                    <label class="layui-form-label">名字</label>
-
-                    <div class="layui-input-block">
-                        <input type="text" name="userName" th:value="${session.user.getUserName()}" id="name"
-                               class="layui-input">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">用户名</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="userName" th:value="${profileUser.userName}" required lay-verify="required" class="layui-input">
+                        </div>
                     </div>
-                </div>
 
-                <div class="layui-form-item">
-                    <label class="layui-form-label">邮箱</label>
-
-                    <div class="layui-input-block">
-                        <input type="text" name="UserEmail" th:value="${session.user.getUserEmail()}" id="email"
-                               class="layui-input">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">邮箱</label>
+                        <div class="layui-input-block">
+                            <input type="email" name="userEmail" th:value="${profileUser.userEmail}" required lay-verify="email" class="layui-input">
+                        </div>
                     </div>
-                </div>
 
-                <div class="layui-form-item">
-                    <label class="layui-form-label">密码</label>
-
-                    <div class="layui-input-block">
-                        <input type="text" name="userPwd" id="password" class="layui-input"
-                               th:value="${session.user.getUserPwd()}">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">新密码</label>
+                        <div class="layui-input-block">
+                            <input type="password" name="userPwd" placeholder="如不修改请留空" autocomplete="off" class="layui-input">
+                        </div>
                     </div>
-                </div>
-
-            </form>
+                </form>
+            </div>
         </div>
     </div>
 
     <div th:include="common/footer :: footer"></div>
-
 </div>
 
+<script th:src="@{/scripts/jquery.min.js}"></script>
+<script th:src="@{/layui/layui.all.js}"></script>
+<script>
+    layui.use(['layer', 'form'], function() {
+        var layer = layui.layer;
+        var form = layui.form;
 
-<script src="/scripts/jquery.min.js"></script>
-<script src="/layui/layui.js"></script>
-<script src="/scripts/user/userMessage.js"></script>
+        $('#btn-modify').on('click', function() {
+            layer.open({
+                type: 1,
+                title: '修改个人信息',
+                area: ['500px', '320px'],
+
+                // 【关键修正】将 shade 设置为 0，即可禁用遮罩层
+                shade: 0,
+
+                content: $('#modify-form-container'),
+                btn: ['确认修改', '取消'],
+                yes: function(index, layero) {
+                    $('#updateUserForm').submit();
+                },
+                end: function() {
+                    // 同样保留这个好习惯，在弹窗关闭后隐藏内容，以备下次使用
+                    $('#modify-form-container').hide();
+                }
+            });
+        });
+    });
+</script>
 
 </body>
 </html>

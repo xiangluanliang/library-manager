@@ -82,16 +82,23 @@ public class UserServiceImpl implements IUserService {
     }
 
     /**
-     * 更新用户个人信息（由用户自己操作）
+     * 更新用户个人信息，并增加了对空密码字段的处理。
      * @param userToUpdate 包含待更新信息的用户对象
      * @return 更新成功返回true，否则返回false
      */
     @Override
-    @Transactional // 建议更新操作都加上事务注解
+    @Transactional
     public boolean updateUserProfile(User userToUpdate) {
-        // 使用 selective 方法，只会更新 userToUpdate 对象中不为null的字段
-        // 这样可以避免将用户的密码、角色等重要信息意外置空
+
+        // 【关键修正】在更新前，检查密码字段
+        // 如果用户提交的密码是空字符串，我们就把它设置为null
+        if (userToUpdate.getUserPwd() != null && userToUpdate.getUserPwd().isEmpty()) {
+            userToUpdate.setUserPwd(null);
+        }
+
+        // 执行选择性更新
         int affectedRows = userMapper.updateByPrimaryKeySelective(userToUpdate);
+
         return affectedRows > 0;
     }
 
