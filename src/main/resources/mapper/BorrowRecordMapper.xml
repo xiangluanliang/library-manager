@@ -9,9 +9,6 @@
     <result column="due_time" jdbcType="TIMESTAMP" property="dueTime" />
     <result column="status" jdbcType="CHAR" property="status" />
   </resultMap>
-    <!-- 其他已有的配置... -->
-
-    <!-- 定义新的 ResultMap -->
   <resultMap id="BorrowRecordVoResultMap" type="com.guo.domain.Vo.BorrowRecordVo">
     <id column="borrow_id" jdbcType="INTEGER" property="borrowId" />
     <result column="user_id" jdbcType="INTEGER" property="userId" />
@@ -20,7 +17,8 @@
     <result column="due_time" jdbcType="TIMESTAMP" property="dueTime" />
     <result column="status" jdbcType="CHAR" property="status" />
     <result column="user_name" jdbcType="VARCHAR" property="userName" />
-    <result column="title" jdbcType="VARCHAR" property="bookTitle" />
+    <result column="book_title" jdbcType="VARCHAR" property="bookTitle" />
+    <result column="return_time" jdbcType="TIMESTAMP" property="returnTime" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -127,15 +125,20 @@
       br.due_time,
       br.status,
       u.user_name,
-      bi.title
+      bi.title AS book_title,  -- 使用别名(alias)是一个好习惯
+      rr.return_time
     FROM
       borrow_record br
         LEFT JOIN
       user u ON br.user_id = u.user_id
         LEFT JOIN
       book_info bi ON br.book_id = bi.book_id
+        LEFT JOIN
+      return_record rr ON br.borrow_id = rr.borrow_id
     WHERE
       br.user_id = #{userId}
+    ORDER BY
+      br.borrow_time DESC
   </select>
 
   <!-- 统计所有借阅记录数量 -->
@@ -293,5 +296,13 @@
       due_time = #{dueTime,jdbcType=TIMESTAMP},
       status = #{status,jdbcType=CHAR}
     where borrow_id = #{borrowId,jdbcType=INTEGER}
+  </update>
+  <update id="decrementAvailableCopies" parameterType="int">
+    UPDATE book_inventory
+    SET
+      available_copies = available_copies - 1
+    WHERE
+      book_id = #{bookId}
+      AND available_copies > 0
   </update>
 </mapper>

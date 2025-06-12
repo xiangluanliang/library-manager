@@ -179,6 +179,18 @@
     from book_info
     where book_id = #{bookId,jdbcType=INTEGER}
   </select>
+  <select id="selectVoByPrimaryKey" parameterType="java.lang.Integer" resultMap="BookInfoVoResultMap">
+    SELECT
+      bi.*,
+      inv.available_copies,
+      inv.total_copies
+    FROM
+      book_info bi
+        LEFT JOIN
+      book_inventory inv ON bi.book_id = inv.book_id
+    WHERE
+      bi.book_id = #{bookId,jdbcType=INTEGER}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from book_info
     where book_id = #{bookId,jdbcType=INTEGER}

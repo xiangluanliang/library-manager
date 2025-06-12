@@ -1,7 +1,12 @@
 package com.guo.controller;
 
 import com.guo.domain.User;
+import com.guo.domain.Vo.BookInfoVo;
+import com.guo.domain.Vo.BorrowRecordVo;
+import com.guo.service.IBookService;
+import com.guo.service.IRecordService;
 import com.guo.service.IUserService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +16,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
+import java.util.Date;
+import java.util.List;
+
 /**
  * 统一用户认证与普通用户功能控制器
  */
@@ -20,9 +28,12 @@ public class UserController {
     @Resource
     private IUserService userService;
 
-    // 预留借阅记录服务的注入点
-    // @Resource
-    // private IBorrowRecordService borrowRecordService;
+     @Resource
+     private IBookService bookService;
+
+    @Resource
+    private IRecordService recordService;
+
 
     /**
      * 当用户访问根路径时，显示登录页面。
@@ -108,19 +119,54 @@ public class UserController {
     }
 
     /**
-     * 查看当前用户的借阅记录
+     * 显示特定图书的借阅/预约确认页面。
+     * @param bookId 从请求URL中获取的书籍ID
+     * @param model Model对象，用于向视图传递数据
+     * @return 借阅/预约页面的视图名
+     */
+    @GetMapping("/user/borrow")
+    public String showBorrowPage(@RequestParam("bookId") int bookId, Model model) {
+
+        // 1. 根据 bookId 调用 BookService 查找完整的图书信息（包括库存）
+        //    这里我们假设 IBookService 中有一个 findBookWithInventoryById 方法
+        BookInfoVo bookVo = bookService.findBookById(bookId); // 假设findBookById返回的是带库存的VO
+
+        // 2. 将查找到的图书对象放入Model中，以便前端页面可以访问
+        //    在HTML中，你就可以通过 ${book.title}, ${book.availableCopies} 来使用它
+        model.addAttribute("book", bookVo);
+
+        // 3. 返回对应的视图名
+        return "user/borrowingBooks";
+    }
+
+    /**
+     * 查看当前用户的借阅记录。
      * @param model Model对象，用于向视图传递数据
      * @param session HttpSession对象，用于获取当前登录用户
      * @return 用户借阅记录页面视图名
      */
     @GetMapping("/user/records")
     public String showUserBorrowingRecords(Model model, HttpSession session) {
+        // 1. 从session中获取当前登录的用户对象
         User currentUser = (User) session.getAttribute("user");
 
-        // TODO: 调用 borrowRecordService.findByUserId(currentUser.getUserId()) 获取借阅记录列表
-        // List<BorrowRecord> records = borrowRecordService.findByUserId(currentUser.getUserId());
-        // model.addAttribute("borrowingRecords", records);
+        // 安全检查，如果用户未登录则直接跳转回登录页
+        if (currentUser == null) {
+            return "redirect:/";
+        }
 
+        // 2. 调用 RecordService，根据用户ID查询其所有的借阅记录
+        //    这个方法需要你在IRecordService和其实现类中创建
+        List<BorrowRecordVo> recordList = recordService.findRecordsByUserId(currentUser.getUserId());
+
+        System.out.println("=============================================");
+        System.out.println("【日志】尝试登录，用户名: " + currentUser.getUserName());
+
+        // 3. 将查询到的记录列表放入Model中
+        //    在HTML中，你就可以通过 th:each="record : ${recordList}" 来遍历
+        model.addAttribute("recordList", recordList);
+
+        // 4. 返回对应的视图名
         return "user/borrowingBooksRecord";
     }
 
@@ -165,26 +211,62 @@ public class UserController {
         return "redirect:/user/profile";
     }
 
+
     /**
-     * 显示可借阅的图书列表及借书页面
-     * @return 借书页面视图名
+     * 处理确认借书的表单提交
+     * @param bookId 从表单隐藏域获取
+     * @param dueDate 从表单日期选择器获取
+     * @param session 用于获取当前用户
+     * @param redirectAttributes 用于重定向后显示提示信息
+     * @return 重定向视图
      */
-    @GetMapping("/user/borrow")
-    public String showBorrowPage() {
-        // 这个页面通常会显示所有可借阅的图书列表
-        // TODO: 调用 bookService获取图书列表并添加到Model中
-        return "user/borrowingBooks";
+    @PostMapping("/user/borrow/execute")
+    public String executeBorrow(@RequestParam("bookId") int bookId,
+                                @RequestParam("dueDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date dueDate,
+                                HttpSession session,
+                                RedirectAttributes redirectAttributes) {
+
+        User currentUser = (User) session.getAttribute("user");
+        if (currentUser == null) {
+            return "redirect:/"; // 用户未登录
+        }
+
+        boolean success = recordService.executeBorrow(bookId, currentUser, dueDate);
+
+        if (success) {
+            redirectAttributes.addFlashAttribute("message", "借阅成功！请在应还日期前归还。");
+            return "redirect:/user/records"; // 借阅成功，跳转到我的借阅记录页面
+        } else {
+            redirectAttributes.addFlashAttribute("error", "借阅失败！该书可能已被借出或您已达到借阅上限。");
+            return "redirect:/books/search"; // 借阅失败，返回图书搜索页
+        }
     }
 
     /**
-
-     * 显示还书页面
-     * @return 还书页面视图名
+     * 处理图书预约请求
+     * @param bookId 从表单提交的图书ID
+     * @param session 用于获取当前登录用户
+     * @param redirectAttributes 用于在重定向后显示提示信息
+     * @return 重定向到图书搜索页面
      */
-    @GetMapping("/user/return")
-    public String showReturnPage() {
-        // 这个页面通常会显示当前用户已借阅且未归还的图书列表
-        // TODO: 调用borrowRecordService获取记录并添加到Model中
-        return "user/returnBooks";
+    @PostMapping("/user/reserve/execute")
+    public String executeReservation(@RequestParam("bookId") int bookId,
+                                     HttpSession session,
+                                     RedirectAttributes redirectAttributes) {
+        User currentUser = (User) session.getAttribute("user");
+        if (currentUser == null) {
+            return "redirect:/";
+        }
+
+        // 调用 recordService 的方法
+        boolean success = recordService.createReservation(bookId, currentUser);
+
+        if (success) {
+            redirectAttributes.addFlashAttribute("message", "图书预约成功！");
+        } else {
+            redirectAttributes.addFlashAttribute("error", "预约失败，您可能已预约过此书。");
+        }
+
+        return "redirect:/books/search";
     }
 }

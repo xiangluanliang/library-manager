@@ -135,10 +135,10 @@ public class BookServiceImpl implements IBookService {
     /**
      * 根据ID查找一本图书。
      * @param bookId 图书ID
-     * @return BookInfo对象
+     * @return BookInfoVo对象
      */
     @Override
-    public BookInfo findBookById(int bookId) {
-        return bookInfoMapper.selectByPrimaryKey(bookId);
+    public BookInfoVo findBookById(int bookId) {
+        return bookInfoMapper.selectVoByPrimaryKey(bookId);
     }
 }

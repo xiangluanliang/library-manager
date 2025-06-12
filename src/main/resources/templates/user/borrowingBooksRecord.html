@@ -1,128 +1,64 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>普通用户 - 图书管理系统</title>
-    <link href="/layui/css/layui.css" rel="stylesheet"/>
+    <title>借阅记录 - 图书管理系统</title>
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}">
     <style>
-        body {
-            font-family: "Microsoft YaHei", sans-serif;
-            background: linear-gradient(to right, #f0f4f8, #e2ecf4);
-            margin: 0;
-        }
-
-        .layui-side-scroll {
-            background-color: #2f4056;
-        }
-
-        .layui-nav-tree .layui-nav-item > a {
-            color: #fff !important;
-            font-size: 16px;
-        }
-
-        .layui-nav-child dd a {
-            padding-left: 40px !important;
-        }
-
-        .layui-nav-child dd a:hover {
-            background-color: #1e9fff !important;
-            color: #fff !important;
-        }
-
-        .layui-body {
-            padding: 30px;
-            background-color: transparent;
-            min-height: 100vh;
-        }
-
-        .layui-container {
-            background: #fff;
-            border-radius: 10px;
-            padding: 30px;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
-        }
-
-        h3 {
-            font-size: 26px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            color: #333;
-        }
-
-        table.layui-table {
-            margin-top: 20px;
-            border-radius: 8px;
-        }
-
-        .layui-table thead tr {
-            background-color: #f8f8f8;
-            font-weight: bold;
-            text-align: center;
-        }
-
-        .layui-table td,
-        .layui-table th {
-            text-align: center;
-        }
-
-        .layui-footer {
-            text-align: center;
-            padding: 15px;
-            font-size: 14px;
-            color: #666;
-            background: #f2f2f2;
-            border-top: 1px solid #e6e6e6;
-        }
-
+        .main-container { padding: 30px; }
+        .record-panel { padding: 30px; background-color: #fff; border-radius: 8px; }
     </style>
 </head>
-<body class="layui-layout-body">
+<body class="layui-layout-body" style="background-color: #f2f2f2;">
+
 <div class="layui-layout layui-layout-admin">
-
-    <!-- 顶部导航 -->
     <div th:include="common/header :: header"></div>
-
-    <!-- 左侧导航栏 -->
     <div th:include="user/sidebar :: sidebar('borrowRecord')"></div>
 
-    <!-- 主体内容区域 -->
-    <div class="layui-body">
-        <div class="layui-container">
-            <h3 style="text-align: center;">📚 当前借阅记录</h3>
-            <hr class="layui-bg-blue">
-
-            <table class="layui-table layui-table-striped layui-table-hover">
+    <div class="layui-body main-container">
+        <div class="record-panel">
+            <h2 style="text-align: center; margin-bottom: 20px;">我的借阅历史</h2>
+            <hr>
+            <table class="layui-table layui-table-hover">
                 <thead>
                 <tr>
-                    <th>书籍 ID</th>
                     <th>书名</th>
-                    <th>借书日期</th>
-                    <th>最晚还书日期</th>
+                    <th>借阅日期</th>
+                    <th>应还日期</th>
+                    <th>实际归还日期</th>
+                    <th>状态</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="borrowingBooks : ${borrowingBooksList}">
-                    <td th:text="${borrowingBooks.getBook().getBookId()}"></td>
-                    <td th:title="${borrowingBooks.getBook().getBookAuthor()}"
-                        th:text="${borrowingBooks.getBook().getBookName()}"></td>
-                    <td th:text="${borrowingBooks.getDateOfBorrowing()}"></td>
-                    <td th:text="${borrowingBooks.getDateOfReturn()}"></td>
+                <tr th:each="record : ${recordList}">
+                    <td th:text="${record.bookTitle}"></td>
+                    <td th:text="${#dates.format(record.borrowTime, 'yyyy-MM-dd')}"></td>
+                    <td th:text="${#dates.format(record.dueTime, 'yyyy-MM-dd')}"></td>
+                    <td th:text="${record.returnTime != null} ? ${#dates.format(record.returnTime, 'yyyy-MM-dd')} : '-'"></td>
+                    <td>
+                        <span th:switch="${record.status}">
+                            <span th:case="'borrowed'" class="layui-badge layui-bg-blue">借阅中</span>
+                            <span th:case="'returned'" class="layui-badge layui-bg-green">已归还</span>
+                            <span th:case="'overdue'" class="layui-badge layui-bg-orange">已逾期</span>
+                            <span th:case="*" class="layui-badge layui-bg-gray">未知</span>
+                        </span>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(recordList)}">
+                    <td colspan="5" style="text-align: center;">你还没有任何借阅记录。</td>
                 </tr>
                 </tbody>
             </table>
         </div>
     </div>
 
-    <!-- 底部 -->
     <div th:include="common/footer :: footer"></div>
-
 </div>
 
-<script src="/scripts/jquery.min.js"></script>
-<script src="/layui/layui.js"></script>
+<script th:src="@{/layui/layui.all.js}"></script>
 <script>
-    layui.use('element', function () {
-        let element = layui.element;
+    layui.use(['element'], function () {
+        var element = layui.element;
     });
 </script>
 

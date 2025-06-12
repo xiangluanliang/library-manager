@@ -1,7 +1,10 @@
 package com.guo.service;
 
+import com.guo.domain.User;
 import com.guo.domain.Vo.BorrowRecordVo;
 import com.guo.utils.page.Page;
+
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -23,4 +26,23 @@ public interface IRecordService {
      * @return 包含完整借阅信息的列表。
      */
     List<BorrowRecordVo> findRecordsByUserId(int userId);
+
+    /**
+     * 创建一个新的图书预约记录
+     * @param bookId 要预约的图书ID
+     * @param currentUser 当前登录的用户
+     * @return 成功返回true，失败（如已预约）返回false
+     */
+    boolean createReservation(int bookId, User currentUser);
+
+
+    /**
+     * 执行借书操作。
+     * @param bookId 要借阅的图书ID
+     * @param currentUser 当前操作的用户
+     * @param dueDate 用户选择的应还日期
+     * @return 借阅成功返回true，失败返回false。
+     */
+    boolean executeBorrow(int bookId, User currentUser, Date dueDate);
+
 }

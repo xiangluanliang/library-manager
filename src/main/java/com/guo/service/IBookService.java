@@ -40,6 +40,6 @@ public interface IBookService {
      * @param bookId 图书ID
      * @return BookInfo对象，不存在则返回null。
      */
-    BookInfo findBookById(int bookId);
+    BookInfoVo findBookById(int bookId);
 
 }

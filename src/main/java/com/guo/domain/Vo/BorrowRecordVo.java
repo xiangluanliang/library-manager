@@ -1,6 +1,7 @@
 package com.guo.domain.Vo;
 
 import com.guo.domain.BorrowRecord;
+import java.util.Date;
 
 /**
  * 借阅记录的视图对象
@@ -8,9 +9,9 @@ import com.guo.domain.BorrowRecord;
  */
 public class BorrowRecordVo extends BorrowRecord {
 
-    // 扩展的字段，用于存储关联表的信息
     private String userName;
     private String bookTitle;
+    private Date returnTime;
 
     // --- Getter and Setter ---
 
@@ -28,5 +29,14 @@ public class BorrowRecordVo extends BorrowRecord {
 
     public void setBookTitle(String bookTitle) {
         this.bookTitle = bookTitle;
+    }
+
+    // 【新增】为returnTime字段添加getter和setter
+    public Date getReturnTime() {
+        return returnTime;
+    }
+
+    public void setReturnTime(Date returnTime) {
+        this.returnTime = returnTime;
     }
 }

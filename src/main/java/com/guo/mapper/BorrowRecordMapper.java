@@ -2,10 +2,10 @@ package com.guo.mapper;
 
 import com.guo.domain.BorrowRecord;
 import com.guo.domain.BorrowRecordExample;
-import java.util.List;
-
 import com.guo.domain.Vo.BorrowRecordVo;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface BorrowRecordMapper {
     long countByExample(BorrowRecordExample example);
@@ -57,4 +57,11 @@ public interface BorrowRecordMapper {
 
     // 统计用户已借阅的图书数量
     int countBorrowedBooksByUserId(@Param("userId") int userId);
+
+    /**
+     * 将指定图书ID的可用库存减1。
+     * @param bookId 图书ID
+     * @return 受影响的行数（成功则为1，失败则为0）
+     */
+    int decrementAvailableCopies(int bookId);
 }

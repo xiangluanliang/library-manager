@@ -1,82 +1,82 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>普通用户 - 图书管理系统</title>
-    <link href="/layui/css/layui.css" rel="stylesheet"/>
+    <title>借阅与预约 - 图书管理系统</title>
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}">
     <style>
-        .main-title {
-            text-align: center;
-            font-size: 28px;
-            font-weight: bold;
-            margin: 20px 0;
-            color: #009688;
-        }
-
-        .form-container {
-            padding: 30px 50px;
-            background-color: #f8f8f8;
-            border-radius: 8px;
-            margin: 30px auto;
-            max-width: 500px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        }
-
-        .layui-btn {
-            width: 100%;
-            margin-top: 15px;
-        }
-
-        .layui-layout-body {
-            background-color: #f2f2f2;
-        }
+        .main-container { padding: 30px; }
+        .form-panel { padding: 30px; background-color: #fff; border-radius: 8px; max-width: 600px; margin: 20px auto; }
+        .book-title { font-size: 22px; font-weight: bold; margin-bottom: 10px; }
+        .book-author { color: #666; margin-bottom: 20px; }
     </style>
 </head>
-
-<body class="layui-layout-body">
+<body class="layui-layout-body" style="background-color: #f2f2f2;">
 
 <div class="layui-layout layui-layout-admin">
-
-    <!-- 头部 -->
     <div th:include="common/header :: header"></div>
-
-    <!-- 左侧菜单 -->
     <div th:include="user/sidebar :: sidebar('borrowOp')"></div>
 
-    <!-- 主体区域 -->
-    <div class="layui-body">
-        <div class="layui-container">
-            <div class="main-title">用 户 借 书</div>
-
-            <div class="form-container">
-                <form class="layui-form" lay-filter="borrowForm">
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">书籍编号</label>
-                        <div class="layui-input-block">
-                            <input type="text" name="bookId" id="bookId" required lay-verify="required"
-                                   placeholder="请输入书籍编号" autocomplete="off" class="layui-input" autofocus>
-                        </div>
-                    </div>
-
-                    <div class="layui-form-item">
-                        <button type="button" class="layui-btn layui-bg-blue" id="btn1">
-                            确认借书
-                        </button>
-                    </div>
-                </form>
+    <div class="layui-body main-container">
+        <div class="form-panel">
+            <div th:if="${book.availableCopies > 0}">
+                <h2 style="text-align: center;">确认借阅信息</h2>
             </div>
+            <div th:if="${book.availableCopies <= 0}">
+                <h2 style="text-align: center;">确认预约信息</h2>
+            </div>
+            <hr>
+
+            <div style="text-align: center;">
+                <p class="book-title" th:text="${book.title}"></p>
+                <p class="book-author" th:text="'作者: ' + ${book.author}"></p>
+            </div>
+
+            <form class="layui-form" th:if="${book.availableCopies > 0}" th:action="@{/user/borrow/execute}" method="post">
+                <input type="hidden" name="bookId" th:value="${book.bookId}">
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">应还日期</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="dueDate" id="dueDate" lay-verify="required" placeholder="请选择应还日期" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item" style="margin-top: 30px;">
+                    <button class="layui-btn layui-btn-fluid" lay-submit>确认借阅</button>
+                </div>
+            </form>
+
+            <form class="layui-form" th:if="${book.availableCopies <= 0}" th:action="@{/user/reserve/execute}" method="post">
+                <input type="hidden" name="bookId" th:value="${book.bookId}">
+                <div class="layui-form-item" style="text-align: center; color: #FF5722;">
+                    <p>当前书籍已全部借出，您可以进行预约。</p>
+                    <p>图书归还后，我们将通过邮件通知您。</p>
+                </div>
+                <div class="layui-form-item" style="margin-top: 30px;">
+                    <button class="layui-btn layui-btn-warm layui-btn-fluid" lay-submit>确认预约</button>
+                </div>
+            </form>
         </div>
     </div>
 
-    <!-- 页脚 -->
     <div th:include="common/footer :: footer"></div>
-
 </div>
 
-<!-- JS 引入 -->
-<script src="/scripts/jquery.min.js"></script>
-<script src="/layui/layui.all.js"></script>
-<script src="/scripts/user/borrowingBook.js"></script>
+<script th:src="@{/scripts/jquery.min.js}"></script>
+<script th:src="@{/layui/layui.all.js}"></script>
+<script>
+    layui.use(['form', 'laydate'], function () {
+        var form = layui.form;
+        var laydate = layui.laydate;
+
+        // 初始化日期选择器
+        laydate.render({
+            elem: '#dueDate',
+            min: 1 // 最小可选天数，1表示从明天开始
+        });
+    });
+</script>
 
 </body>
 </html>

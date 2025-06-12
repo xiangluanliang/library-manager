@@ -53,10 +53,11 @@
                     th:classappend="${activePage.startsWith('borrow')} ? ' layui-nav-itemed'">
                     <a href="javascript:;">&#xe705;</i> 借阅管理</a>
                     <dl class="layui-nav-child">
+                        <dd th:class="${activePage == 'borrowOp'} ? 'layui-this'">
+<!--                            这里偷个懒了先-->
+                            <a href="/books/search">借阅书籍</a></dd>
                         <dd th:class="${activePage == 'borrowRecord'} ? 'layui-this'">
                             <a href="/user/records">借书记录</a></dd>
-                        <dd th:class="${activePage == 'borrowOp'} ? 'layui-this'">
-                            <a href="/user/borrow">借阅书籍</a></dd>
                     </dl>
                 </li>
 
@@ -64,8 +65,6 @@
                     th:classappend="${activePage.startsWith('book')} ? ' layui-nav-itemed'">
                     <a href="javascript:;">&#xe857;</i> 书籍管理</a>
                     <dl class="layui-nav-child">
-                        <dd th:class="${activePage == 'bookReturn'} ? 'layui-this'"
-                        ><a href="/user/return">归还书籍</a></dd>
                         <dd th:class="${activePage == 'bookSearch'} ? 'layui-this'"
                         ><a href="/books/search">查询书籍</a></dd>
                     </dl>

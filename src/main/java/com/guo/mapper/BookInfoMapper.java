@@ -23,6 +23,7 @@ public interface BookInfoMapper {
     List<BookInfo> selectByExample(BookInfoExample example);
 
     BookInfo selectByPrimaryKey(Integer bookId);
+    BookInfoVo selectVoByPrimaryKey(Integer bookId);
 
     int updateByExampleSelective(@Param("record") BookInfo record, @Param("example") BookInfoExample example);
 
