@@ -3,6 +3,7 @@ package com.guo.service.impl;
 import com.guo.domain.BookCategory;
 import com.guo.domain.BookCategoryExample;
 import com.guo.mapper.BookCategoryMapper;
+import com.guo.mapper.BookInfoMapper;
 import com.guo.service.IBookCategoryService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,9 +20,9 @@ public class BookCategoryServiceImpl implements IBookCategoryService {
     @Resource
     private BookCategoryMapper bookCategoryMapper;
 
-    // TODO: 后续为实现更复杂的业务逻辑（如删除分类前检查其下是否有书），可能需要注入BookInfoMapper
-    // @Resource
-    // private BookInfoMapper bookInfoMapper;
+
+     @Resource
+     private BookInfoMapper bookInfoMapper;
 
     /**
      * 获取所有图书分类。
@@ -67,12 +68,14 @@ public class BookCategoryServiceImpl implements IBookCategoryService {
     @Override
     @Transactional
     public boolean deleteCategoryById(int categoryId) {
-        // TODO: 实现更安全的删除逻辑。
-        // 在真正删除分类前，应该先检查该分类下是否还有图书。
-        // 1. 调用 bookInfoMapper.countByCategoryId(categoryId)
-        // 2. 如果数量大于0，则不允许删除，直接返回false。
-        // 3. 如果数量为0，才执行下面的删除操作。
+        // 检查该分类下是否还有图书
+        int bookCount = bookInfoMapper.countByCategoryId(categoryId);
+        if (bookCount > 0) {
+            // 分类下有图书，不允许删除
+            return false;
+        }
 
+        // 分类下没有图书，执行删除操作
         int affectedRows = bookCategoryMapper.deleteByPrimaryKey(categoryId);
         return affectedRows > 0;
     }

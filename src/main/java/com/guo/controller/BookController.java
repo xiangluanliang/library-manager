@@ -137,10 +137,10 @@ public class BookController {
     @PostMapping("/categories/admin/delete")
     @ResponseBody
     public String deleteBookCategory(@RequestParam("categoryId") int categoryId) {
-        // TODO: 在IBookCategoryService中实现删除分类的逻辑
+
         // 注意：删除前需要检查该分类下是否还有图书
-        // boolean success = bookCategoryService.deleteCategoryById(categoryId);
-        // return success ? "true" : "false";
-        return "true";
+         boolean success = bookCategoryService.deleteCategoryById(categoryId);
+         return success ? "true" : "false";
+
     }
 }

@@ -97,6 +97,9 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
+  <select id="countByCategoryId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+    SELECT COUNT(*) FROM book_info WHERE category_id = #{categoryId}
+  </select>
   <insert id="insert" parameterType="com.guo.domain.BookCategory">
     <selectKey keyProperty="categoryId" order="AFTER" resultType="java.lang.Integer">
       SELECT LAST_INSERT_ID()
