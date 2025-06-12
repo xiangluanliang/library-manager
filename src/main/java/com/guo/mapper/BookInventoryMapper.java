@@ -2,8 +2,9 @@ package com.guo.mapper;
 
 import com.guo.domain.BookInventory;
 import com.guo.domain.BookInventoryExample;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface BookInventoryMapper {
     long countByExample(BookInventoryExample example);
@@ -33,4 +34,12 @@ public interface BookInventoryMapper {
 
     // 根据图书ID查询库存信息
     BookInventory selectByBookId(@Param("bookId") int bookId);
+
+    /**
+     * 根据book_id选择性地更新库存信息。
+     * 只会更新record对象中值不为null的字段。
+     * @param record 包含待更新库存信息的对象
+     * @return 受影响的行数
+     */
+    int updateByBookIdSelective(BookInventory record);
 }

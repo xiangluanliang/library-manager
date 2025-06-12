@@ -50,4 +50,15 @@ public class BookInventory {
     public void setLocation(String location) {
         this.location = location == null ? null : location.trim();
     }
+
+    @Override
+    public String toString() {
+        return "BookInventory{" +
+                "inventoryId=" + inventoryId +
+                ", bookId=" + bookId +
+                ", totalCopies=" + totalCopies +
+                ", availableCopies=" + availableCopies +
+                ", location='" + location + '\'' +
+                '}';
+    }
 }

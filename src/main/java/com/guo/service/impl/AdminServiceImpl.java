@@ -36,7 +36,6 @@ public class AdminServiceImpl implements IAdminService {
 
         // 2. 查询用户总数
         long totalCount = userMapper.countByExample();
-        //TODO:page.setTotalCount(totalCount);totalcount
 
         // 3. 设置其他分页参数
         page.setPageNum(pageNum);
@@ -60,7 +59,6 @@ public class AdminServiceImpl implements IAdminService {
             return false; // 用户名已存在
         }
 
-        // 核心安全步骤：对用户的明文密码进行加密
         String encodedPassword = newUser.getUserPwd();
         newUser.setUserPwd(encodedPassword);
 

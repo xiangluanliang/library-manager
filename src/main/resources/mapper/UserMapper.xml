@@ -215,10 +215,6 @@
     LIMIT #{offset}, #{pageSize}
   </select>
 
-  <!-- 查询用户总数 -->
-  <select id="countByExample" resultType="long">
-    SELECT COUNT(*) FROM user
-  </select>
   <update id="updateByPrimaryKeySelective" parameterType="com.guo.domain.User">
     update user
     <set>

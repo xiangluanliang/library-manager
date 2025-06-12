@@ -217,7 +217,7 @@
       #{categoryId,jdbcType=INTEGER}, #{price,jdbcType=DECIMAL}, #{description,jdbcType=LONGVARCHAR}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.guo.domain.BookInfo">
+  <insert id="insertSelective" parameterType="com.guo.domain.BookInfo" useGeneratedKeys="true">
     <selectKey keyProperty="bookId" order="AFTER" resultType="java.lang.Integer">
       SELECT LAST_INSERT_ID()
     </selectKey>

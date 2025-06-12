@@ -115,7 +115,7 @@
             }, function(index){
                 // 点击确认后的回调
                 $.ajax({
-                    url: '/admin/books/delete', // 假设删除的接口地址
+                    url: '/books/admin/delete', // 假设删除的接口地址
                     type: 'POST',
                     data: { bookId: bookId },
                     success: function(result) {

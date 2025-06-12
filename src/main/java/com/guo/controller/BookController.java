@@ -1,17 +1,20 @@
 package com.guo.controller;
 
 import com.guo.domain.BookCategory;
-import com.guo.domain.BookInfo;
 import com.guo.domain.Vo.BookInfoVo;
 import com.guo.service.IBookCategoryService;
 import com.guo.service.IBookService;
 import com.guo.utils.page.Page;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -68,6 +71,21 @@ public class BookController {
     // --- 以下为管理员专属功能 ---
 
     /**
+     * 【新增】数据绑定初始化方法
+     * 这个方法会在处理这个Controller中的请求之前执行，用于定制数据绑定规则。
+     * @param binder Web数据绑定器
+     */
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        // 创建一个日期格式化对象，格式必须与前端传来的一致
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        dateFormat.setLenient(false); // 设置为非宽松解析，要求格式严格匹配
+
+        // 注册一个自定义的编辑器，用于将字符串转换为Date对象
+        // true表示允许为空
+        binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
+    }
+    /**
      * (管理员功能) 处理添加新书的请求
      * @param bookInfo 包含新书信息的对象
      * @param redirectAttributes 用于重定向后显示提示
@@ -75,14 +93,13 @@ public class BookController {
      */
     @PostMapping("/admin/add")
     public String addBook(BookInfoVo bookInfo, RedirectAttributes redirectAttributes) {
-
-         boolean success = bookService.addNewBook(bookInfo,bookInfo.getTotalCopies());
-         if (success) {
-             redirectAttributes.addFlashAttribute("message", "图书《" + bookInfo.getTitle() + "》添加成功！");
-         } else {
-             redirectAttributes.addFlashAttribute("error", "添加失败，ISBN可能已存在。");
-         }
-        return "redirect:/admin/books"; // 操作结束后重定向到管理员的图书列表页
+        boolean success = bookService.addNewBook(bookInfo, bookInfo.getTotalCopies());
+        if (success) {
+            redirectAttributes.addFlashAttribute("message", "图书《" + bookInfo.getTitle() + "》添加成功！");
+        } else {
+            redirectAttributes.addFlashAttribute("error", "添加失败...");
+        }
+        return "redirect:/admin/books/add";
     }
 
     /**
@@ -112,7 +129,6 @@ public class BookController {
     public List<BookCategory> getAllBookCategories() {
 
          return bookCategoryService.findAll();
-        // 暂时返回null
     }
 
     /**

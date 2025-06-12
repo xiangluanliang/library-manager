@@ -2,93 +2,145 @@
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>管理员-图书管理系统</title>
-    <link href="/layui/css/layui.css" rel="stylesheet" media="all"/>
-
+    <title>添加书籍 - 管理员</title>
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}" media="all"/>
+    <style>
+        .form-container { padding: 30px; background-color: #fff; border-radius: 8px; margin: 20px auto; max-width: 700px; }
+        .layui-layout-body { background-color: #f2f2f2; }
+    </style>
 </head>
+<body class="layui-layout-body">
+
 <div class="layui-layout layui-layout-admin">
 
     <div th:include="common/header :: header"></div>
     <div th:include="admin/sidebar :: sidebar('bookAdd')"></div>
 
-    <div class="layui-body layui-container"
-         style="margin : 10px auto; padding:10px 16px ;border: 200px; width: 480px; height: 580px; background-color: #f2f2f2">
-
-        <hr class="layui-bg-blue">
-        <h2 style="text-align:center">添加书籍</h2>
-        <hr class="layui-bg-blue">
-
-        <div style="width: 420px; padding: 20px; margin: auto auto; background-color: #f2f2f2">
-            <form class="layui-form" id="addBookForm">
-
+    <div class="layui-body" style="padding: 15px;">
+        <div class="form-container">
+            <h2 style="text-align:center; margin-bottom: 20px;">添加新书籍</h2>
+            <hr>
+            <form class="layui-form" method="post" th:action="@{/books/admin/add}">
                 <div class="layui-form-item">
-                    <label class="layui-form-label">书 名</label>
-                    <div class="layui-input-inline">
-                        <input required lay-verify="required" id="bookName" type="text" name="bookName"
-                               placeholder="请输入书名" autofocus
-                               class="layui-input" autocomplete="off">
+                    <label class="layui-form-label">书名</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="title" required lay-verify="required" placeholder="请输入书名" autocomplete="off" class="layui-input">
                     </div>
                 </div>
 
                 <div class="layui-form-item">
-                    <label class="layui-form-label">作 者</label>
-                    <div class="layui-input-inline">
-                        <input id="bookAuthor" lay-verify="required" type="text" name="bookAuthor" placeholder="请输入作者"
-                               autocomplete="off" class="layui-input">
+                    <label class="layui-form-label">作者</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="author" required lay-verify="required" placeholder="请输入作者" autocomplete="off" class="layui-input">
                     </div>
                 </div>
 
                 <div class="layui-form-item">
                     <label class="layui-form-label">出版社</label>
-                    <div class="layui-input-inline">
-                        <input id="bookPublish" lay-verify="required" type="text" name="bookPublish"
-                               placeholder="请输入出版社" autocomplete="off"
-                               class="layui-input">
+                    <div class="layui-input-block">
+                        <input type="text" name="publisher" required lay-verify="required" placeholder="请输入出版社" autocomplete="off" class="layui-input">
                     </div>
                 </div>
 
                 <div class="layui-form-item">
-                    <label class="layui-form-label">类 别</label>
-                    <div class="layui-input-inline">
-                        <select lay-verify="required" id="bookCategory" name="bookCategory">
+                    <label class="layui-form-label">ISBN</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="isbn" required lay-verify="required" placeholder="请输入13位ISBN号" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">分类</label>
+                    <div class="layui-input-block">
+                        <select name="categoryId" id="bookCategorySelect" lay-verify="required" lay-search>
+                            <option value="">请选择或搜索一个分类</option>
                         </select>
                     </div>
                 </div>
 
                 <div class="layui-form-item">
-                    <label class="layui-form-label">价 格</label>
-                    <div class="layui-input-inline">
-                        <input id="bookPrice" lay-verify="number" type="text" name="bookPrice" placeholder="￥"
-                               autocomplete="off" class="layui-input">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">出版日期</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="publishDate" id="publishDate" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">价格</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="price" lay-verify="number" placeholder="￥" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">入库数量</label>
+                    <div class="layui-input-block">
+                        <input type="number" name="totalCopies" value="1" required lay-verify="number" placeholder="请输入入库数量" autocomplete="off" class="layui-input">
                     </div>
                 </div>
 
                 <div class="layui-form-item layui-form-text">
-                    <label class="layui-form-label">简 介</label>
-                    <div class="layui-input-inline">
-                    <textarea id="bookIntroduction" lay-verify="required" name="bookIntroduction" placeholder="请输入简介"
-                              class="layui-textarea "
-                              autocomplete="off"></textarea>
+                    <label class="layui-form-label">简介</label>
+                    <div class="layui-input-block">
+                        <textarea name="description" placeholder="请输入简介" class="layui-textarea"></textarea>
                     </div>
                 </div>
 
-                <!--lay-filter重要 , js 会用到-->
-                <div style="margin-left: 100px">
-                    <input type="submit" lay-filter="btn1" id="btn1" class="layui-btn" lay-submit="" value="添加图书">
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" lay-submit lay-filter="addBookBtn">确认添加</button>
+                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    </div>
                 </div>
-
             </form>
         </div>
-
-
     </div>
-    <div th:include="common/footer :: footer"></div>
 
+    <div th:include="common/footer :: footer"></div>
 </div>
 
-<script src="/scripts/jquery.min.js"></script>
-<script src="/layui/layui.js"></script>
-<script src="/scripts/admin/addBook.js"></script>
+<script th:src="@{/scripts/jquery.min.js}"></script>
+<script th:src="@{/layui/layui.all.js}"></script>
+<script>
+    layui.use(['form', 'layer', 'laydate'], function () {
+        var form = layui.form;
+        var layer = layui.layer;
+        var laydate = layui.laydate;
+
+        laydate.render({
+            elem: '#publishDate'
+        });
+
+        $(document).ready(function() {
+            // 【新增】页面加载完成后，检查是否存在错误消息
+            var errorMsg = $('#error-message-div').data('error');
+            if (errorMsg) {
+                // 如果存在，则用layer.msg进行弹窗提示
+                layer.msg(errorMsg, {icon: 2, time: 2500}); // icon:2 代表错误图标
+            }
+
+            $.ajax({
+                url: '/books/categories/all',
+                type: 'GET',
+                success: function(categories) {
+                    if (categories) {
+                        var categorySelect = $('#bookCategorySelect');
+                        $.each(categories, function(index, category) {
+                            categorySelect.append('<option value="' + category.categoryId + '">' + category.categoryName + '</option>');
+                        });
+                        form.render('select');
+                    } else {
+                        layer.msg('加载图书分类失败！', {icon: 2});
+                    }
+                },
+                error: function() {
+                    layer.msg('请求分类数据时发生网络错误。', {icon: 2});
+                }
+            });
+        });
+    });
+</script>
 
 </body>
 </html>

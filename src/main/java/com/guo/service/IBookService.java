@@ -42,4 +42,11 @@ public interface IBookService {
      */
     BookInfoVo findBookById(int bookId);
 
+    /**
+     * 更新一本图书的信息（包括基本信息和库存）
+     * @param bookVo 包含更新信息的VO对象
+     * @return 更新成功返回true
+     */
+    boolean updateBook(BookInfoVo bookVo);
+
 }

@@ -109,7 +109,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.guo.domain.BookInventory">
+  <insert id="insert" parameterType="com.guo.domain.BookInventory" useGeneratedKeys="true">
     <selectKey keyProperty="inventoryId" order="AFTER" resultType="java.lang.Integer">
       SELECT LAST_INSERT_ID()
     </selectKey>
@@ -118,7 +118,7 @@
     values (#{bookId,jdbcType=INTEGER}, #{totalCopies,jdbcType=INTEGER}, #{availableCopies,jdbcType=INTEGER}, 
       #{location,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.guo.domain.BookInventory">
+  <insert id="insertSelective" parameterType="com.guo.domain.BookInventory" useGeneratedKeys="true">
     <selectKey keyProperty="inventoryId" order="AFTER" resultType="java.lang.Integer">
       SELECT LAST_INSERT_ID()
     </selectKey>
@@ -217,5 +217,20 @@
       available_copies = #{availableCopies,jdbcType=INTEGER},
       location = #{location,jdbcType=VARCHAR}
     where inventory_id = #{inventoryId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByBookIdSelective" parameterType="com.guo.domain.BookInventory">
+    update book_inventory
+    <set>
+      <if test="totalCopies != null">
+        total_copies = #{totalCopies,jdbcType=INTEGER},
+      </if>
+      <if test="availableCopies != null">
+        available_copies = #{availableCopies,jdbcType=INTEGER},
+      </if>
+      <if test="location != null">
+        location = #{location,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where book_id = #{bookId,jdbcType=INTEGER}
   </update>
 </mapper>

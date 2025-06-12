@@ -1,23 +1,18 @@
 package com.guo.controller;
 
+import com.guo.domain.BookCategory;
 import com.guo.domain.User;
-// 预留未来需要用到的新实体类和Service
-// import com.guo.domain.BookInfo;
-// import com.guo.domain.BorrowRecord;
-// import com.guo.service.IBookService;
-// import com.guo.service.IRecordService;
-import com.guo.service.IUserService;
+import com.guo.domain.Vo.BookInfoVo;
+import com.guo.service.*;
+import com.guo.utils.page.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 /**
  * 管理员功能控制器
@@ -29,12 +24,15 @@ public class AdminController {
 
     @Resource
     private IUserService userService;
+    @Resource
+    private IAdminService adminService;
 
-    // TODO: 后续需要注入其他重构后的Service
-    // @Resource
-    // private IBookService bookService;
-    // @Resource
-    // private IRecordService recordService;
+    @Resource
+    private IBookService bookService;
+    @Resource
+    private IRecordService recordService;
+    @Resource
+    private IBookCategoryService bookCategoryService;
 
 
     /**
@@ -56,9 +54,8 @@ public class AdminController {
      */
     @GetMapping("/users")
     public String showUsersPage(@RequestParam(value = "pageNum", defaultValue = "1") int pageNum, Model model) {
-        // TODO: 在IUserService或新的IAdminService中实现分页查询所有用户的逻辑
-        // Page<User> userPage = userService.findAllUsersByPage(pageNum);
-        // model.addAttribute("page", userPage);
+         Page<User> userPage = adminService.findAllUsersByPage(pageNum);
+         model.addAttribute("page", userPage);
         return "admin/showUsers";
     }
 
@@ -79,13 +76,12 @@ public class AdminController {
      */
     @PostMapping("/users/add")
     public String addUser(User newUser, RedirectAttributes redirectAttributes) {
-        // TODO: 在IUserService或新的IAdminService中实现新增用户的逻辑，注意密码要加密
-        // boolean success = userService.addNewUser(newUser);
-        // if (success) {
-        //     redirectAttributes.addFlashAttribute("message", "用户添加成功！");
-        // } else {
-        //     redirectAttributes.addFlashAttribute("error", "添加失败，用户名可能已存在。");
-        // }
+         boolean success = adminService.addNewUser(newUser);
+         if (success) {
+             redirectAttributes.addFlashAttribute("message", "用户添加成功！");
+         } else {
+             redirectAttributes.addFlashAttribute("error", "添加失败，用户名可能已存在。");
+         }
         return "redirect:/admin/users";
     }
 
@@ -97,28 +93,12 @@ public class AdminController {
     @PostMapping("/users/delete")
     @ResponseBody
     public String deleteUser(@RequestParam("userId") int userId) {
-        // TODO: 在IUserService或新的IAdminService中实现删除用户的逻辑
-        // boolean success = userService.deleteUserById(userId);
-        // return success ? "true" : "false";
-        return "true"; // 暂时返回true
+        boolean success = adminService.deleteUserById(userId);
+        return success ? "true" : "false";
     }
 
 
     // --- 图书管理 ---
-
-    /**
-     * 显示图书管理页面
-     * @param pageNum 当前页码
-     * @param model Model对象
-     * @return 显示图书列表的视图
-     */
-    @GetMapping("/books")
-    public String showBooksPage(@RequestParam(value = "pageNum", defaultValue = "1") int pageNum, Model model) {
-        // TODO: 在IBookService中实现分页查询所有图书的逻辑
-        // Page<BookInfo> bookPage = bookService.findAllBooksByPage(pageNum);
-        // model.addAttribute("page", bookPage);
-        return "admin/showBooks";
-    }
 
     /**
      * 显示新增图书页面
@@ -126,12 +106,50 @@ public class AdminController {
      */
     @GetMapping("/books/add")
     public String showAddBookPage() {
-        // TODO: 查询所有图书分类并添加到Model中，供下拉框选择
-        // List<BookCategory> categories = bookCategoryService.findAll();
-        // model.addAttribute("categories", categories);
         return "admin/addBook";
     }
 
+    /**
+     * 显示编辑书籍页面
+     * @param id 从URL路径中获取的书籍ID
+     * @param model Model对象，用于向视图传递数据
+     * @return 编辑书籍页面的视图名
+     */
+    @GetMapping("/books/edit/{id}")
+    public String showEditBookPage(@PathVariable("id") int id, Model model) {
+        // 1. 根据ID调用Service查找书籍的完整信息（包含库存）
+        BookInfoVo bookVo = bookService.findBookById(id);
+
+        // 2. 将查找到的书籍对象放入Model中
+        model.addAttribute("book", bookVo);
+
+        // 3. 同时获取所有分类，用于填充下拉框
+         List<BookCategory> categories = bookCategoryService.findAll();
+         model.addAttribute("categories", categories);
+
+        return "admin/editBook"; // 返回一个新的编辑页面
+    }
+
+    /**
+     * 处理编辑书籍的表单提交
+     * @param bookInfo 包含更新后书籍信息的对象
+     * @param redirectAttributes 用于重定向后显示提示信息
+     * @return 重定向到图书管理页面
+     */
+    @PostMapping("/books/edit")
+    public String updateBook(BookInfoVo bookInfo, RedirectAttributes redirectAttributes) {
+        // 调用Service层执行更新操作
+        boolean success = bookService.updateBook(bookInfo);
+
+        if (success) {
+            redirectAttributes.addFlashAttribute("message", "图书《" + bookInfo.getTitle() + "》信息更新成功！");
+        } else {
+            redirectAttributes.addFlashAttribute("error", "更新失败！");
+        }
+
+        // 操作结束后，重定向回图书列表页面
+        return "redirect:/books/search?source=admin";
+    }
 
     // --- 分类管理 ---
 
@@ -142,8 +160,8 @@ public class AdminController {
     @GetMapping("/categories")
     public String showCategoryPage(Model model) {
         // TODO: 在IBookCategoryService中实现查询所有分类的逻辑
-        // List<BookCategory> categoryTree = bookCategoryService.findCategoryTree();
-        // model.addAttribute("categoryTree", categoryTree);
+         List<BookCategory> categoryTree = bookCategoryService.findAll();
+         model.addAttribute("categoryTree", categoryTree);
         return "admin/addCategory";
     }
 

@@ -1,6 +1,7 @@
 package com.guo.service.impl;
 
 import com.guo.domain.BookInfo;
+import com.guo.domain.BookInfoExample;
 import com.guo.domain.BookInventory;
 import com.guo.domain.Vo.BookInfoVo;
 import com.guo.mapper.BookInfoMapper;
@@ -27,7 +28,7 @@ public class BookServiceImpl implements IBookService {
     @Resource
     private BookInventoryMapper bookInventoryMapper;
 
-    // @Resource
+     @Resource
     private BorrowRecordMapper borrowRecordMapper;
 
     /**
@@ -69,39 +70,45 @@ public class BookServiceImpl implements IBookService {
         return page;
     }
 
-    /**
-     * 新增一本图书，包含其库存信息。
-     * 使用@Transactional注解确保操作的原子性。
-     * @param bookInfo 包含图书基本信息的对象
-     * @param totalCopies 要入库的总数量
-     * @return 添加成功返回true
-     */
     @Override
     @Transactional
     public boolean addNewBook(BookInfo bookInfo, int totalCopies) {
         try {
-            // 步骤1: 插入图书基本信息。使用insertSelective更安全。
-            // 插入后，MyBatis会自动将生成的主键ID回填到bookInfo对象中。
-            bookInfoMapper.insertSelective(bookInfo);
+            // 【新增】步骤1: 检查ISBN是否已存在
+            BookInfoExample example = new BookInfoExample();
+            example.createCriteria().andIsbnEqualTo(bookInfo.getIsbn());
+            long existingBooks = bookInfoMapper.countByExample(example);
 
-            // 步骤2: 检查是否成功获取到主键ID
+            if (existingBooks > 0) {
+                System.out.println("【日志】添加失败：ISBN " + bookInfo.getIsbn() + " 已存在。");
+                return false; // 直接返回失败，不尝试插入
+            }
+
+            // 步骤2: 插入图书基本信息
+            bookInfoMapper.insertSelective(bookInfo);
+            System.out.println("【日志】新增图书后获取到的ID: " + bookInfo.getBookId());
+
+            // 步骤3: 检查是否成功获取到主键ID
             if (bookInfo.getBookId() == null || bookInfo.getBookId() == 0) {
-                // 如果没有获取到ID，说明插入失败，抛出异常以回滚事务
                 throw new RuntimeException("插入book_info表失败，未能获取自增ID。");
             }
 
-            // 步骤3: 创建并插入库存信息
+            // 步骤4: 创建并插入库存信息
             BookInventory inventory = new BookInventory();
             inventory.setBookId(bookInfo.getBookId());
             inventory.setTotalCopies(totalCopies);
-            inventory.setAvailableCopies(totalCopies); // 初始时，可借数量等于总数量
-            // inventory.setLocation("默认位置"); // 可以设置一个默认位置
-            bookInventoryMapper.insert(inventory);
+            inventory.setAvailableCopies(totalCopies);
+            inventory.setLocation("A-01-01");
+            System.out.println("【日志】准备插入的库存信息: " + inventory.toString());
+
+            int affectedRows = bookInventoryMapper.insertSelective(inventory);
+
+            if (affectedRows <= 0) {
+                throw new RuntimeException("插入book_inventory表失败。");
+            }
 
             return true;
         } catch (Exception e) {
-            // 捕获任何异常，打印日志，然后事务会自动回滚
-            // 在实际项目中，应使用更专业的日志框架，如SLF4J
             e.printStackTrace();
             return false;
         }
@@ -140,5 +147,32 @@ public class BookServiceImpl implements IBookService {
     @Override
     public BookInfoVo findBookById(int bookId) {
         return bookInfoMapper.selectVoByPrimaryKey(bookId);
+    }
+
+    @Override
+    @Transactional
+    public boolean updateBook(BookInfoVo bookVo) {
+        try {
+            // 步骤1: 更新图书基本信息 (book_info表)
+            // BookInfoVo继承自BookInfo，所以可以直接传入
+            int bookInfoRows = bookInfoMapper.updateByPrimaryKeySelective(bookVo);
+
+            // 步骤2: 更新库存信息 (book_inventory表)
+            BookInventory inventory = new BookInventory();
+            inventory.setBookId(bookVo.getBookId());
+            inventory.setTotalCopies(bookVo.getTotalCopies());
+            inventory.setAvailableCopies(bookVo.getAvailableCopies());
+            // 你可以根据需要更新location等其他字段
+
+            // 使用updateByBookId这个自定义方法，避免主键问题
+            int inventoryRows = bookInventoryMapper.updateByBookIdSelective(inventory);
+
+            // 只有两个更新都至少影响了一行（或按你的业务逻辑判断），才算成功
+            return bookInfoRows > 0 && inventoryRows > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }
