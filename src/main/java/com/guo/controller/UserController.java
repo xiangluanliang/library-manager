@@ -1,5 +1,7 @@
 package com.guo.controller;
 
+import com.guo.domain.BookInfo;
+import com.guo.domain.BorrowRecord;
 import com.guo.domain.User;
 import com.guo.domain.Vo.BookInfoVo;
 import com.guo.domain.Vo.BorrowRecordVo;
@@ -149,6 +151,10 @@ public class UserController {
     public String showUserBorrowingRecords(Model model, HttpSession session) {
         // 1. 从session中获取当前登录的用户对象
         User currentUser = (User) session.getAttribute("user");
+        if (currentUser == null) {
+            // 如果用户未登录，重定向到登录页面
+            return "redirect:/";
+        }
 
         // 安全检查，如果用户未登录则直接跳转回登录页
         if (currentUser == null) {
@@ -211,6 +217,61 @@ public class UserController {
         return "redirect:/user/profile";
     }
 
+
+
+    // ==========================================================   
+    // ==                  账号注销功能                         ==
+    // ==========================================================
+
+    /**
+     * 显示账号注销确认页面
+     * @return 注销确认页面视图名
+     */
+    @GetMapping("/user/delete-account")
+    public String showDeleteAccountPage() {
+        return "user/deleteAccount";
+    }
+
+    /**
+     * 处理账号注销请求
+     * @param password 用户输入的密码用于确认
+     * @param session 当前会话
+     * @param redirectAttributes 重定向属性，用于传递消息
+     * @return 重定向到登录页面
+     */
+    @PostMapping("/user/delete-account")
+    public String deleteUserAccount(@RequestParam("password") String password,
+                                    HttpSession session,
+                                    RedirectAttributes redirectAttributes) {
+
+        // 获取当前登录用户
+        User currentUser = (User) session.getAttribute("user");
+        if (currentUser == null) {
+            // 用户未登录，重定向到登录页面
+            return "redirect:/";
+        }
+
+        // 验证密码是否正确
+        boolean passwordValid = userService.verifyPassword(Long.valueOf(currentUser.getUserId()), password);
+
+        if (passwordValid) {
+            // 执行账号注销
+            boolean deleted = userService.deleteUserById(Long.valueOf(currentUser.getUserId()));
+
+            if (deleted) {
+                // 账号删除成功，使会话失效
+                session.invalidate();
+                redirectAttributes.addFlashAttribute("message", "您的账号已成功注销");
+                return "redirect:/";
+            } else {
+                redirectAttributes.addFlashAttribute("error", "账号注销失败，请稍后再试");
+                return "redirect:/user/delete-account";
+            }
+        } else {
+            redirectAttributes.addFlashAttribute("error", "密码错误，请重新输入");
+            return "redirect:/user/delete-account";
+        }
+    }
 
     /**
      * 处理确认借书的表单提交

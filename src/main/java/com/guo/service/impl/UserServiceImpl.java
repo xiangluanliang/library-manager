@@ -172,6 +172,64 @@ public class UserServiceImpl implements IUserService {
         return false; // 暂时返回false
     }
 
+        /**
+     * 验证用户密码
+     * @param userId 用户ID
+     * @param password 待验证的密码
+     * @return 密码是否正确
+     */
+    @Override
+    public boolean verifyPassword(Long userId, String password) {
+        // 1. 根据ID获取用户
+        User user = userMapper.selectByPrimaryKey(Math.toIntExact(userId));
+        if (user == null) {
+            System.out.println("【密码验证】用户不存在，ID: " + userId);
+            return false;
+        }
+
+        // 2. 比较密码（明文比较）
+        boolean passwordValid = password.equals(user.getUserPwd());
+
+        System.out.println("【密码验证】用户ID: " + userId +
+                " | 密码匹配结果: " + passwordValid);
+
+        return passwordValid;
+    }
+
+
+    /**
+     * 根据ID删除用户（注销账号）
+     * @param userId 用户ID
+     * @return 是否删除成功
+     */
+    @Override
+    public boolean deleteUserById(Long userId) {
+        System.out.println("【账号注销】开始处理用户ID: " + userId);
+
+        // 1. 检查用户是否存在
+        User user = userMapper.selectByPrimaryKey(Math.toIntExact(userId));
+        if (user == null) {
+            System.out.println("【账号注销】失败：用户不存在，ID: " + userId);
+            return false;
+        }
+
+        // 2. 检查是否有未归还的图书
+        int borrowCount = borrowRecordMapper.countBorrowedBooksByUserId(Math.toIntExact(userId));
+        if (borrowCount>0) {
+            System.out.println("【账号注销】失败：用户还有未归还的图书，ID: " + userId);
+            return false;
+        }
+
+        // 3. 删除用户（实际项目中建议软删除）
+        int affectedRows = userMapper.deleteByPrimaryKey(Math.toIntExact(userId));
+        boolean success = affectedRows > 0;
+
+        System.out.println("【账号注销】结果: " + (success ? "成功" : "失败") +
+                " | 影响行数: " + affectedRows);
+
+        return success;
+    }
+
     // --- 以下是旧文件中不再属于UserService职责的方法，已被移除 ---
     // - findAllDepts() -> 已删除
     // - findUserByPage() -> 应属于AdminService
