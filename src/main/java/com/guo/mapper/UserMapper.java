@@ -35,4 +35,10 @@ public interface UserMapper {
      * @return 完整的用户信息，包括角色
      */
     User findByUsername(@Param("username") String userName);
+
+    // 查询当前页的用户列表
+    List<User> selectAllUsersWithLimit(@Param("offset") int offset, @Param("pageSize") int pageSize);
+
+    // 查询用户总数
+    long countByExample();
 }
