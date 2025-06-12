@@ -32,10 +32,10 @@
                     </thead>
 
                     <tr>
-                        <td><b th:text="${session.admin.getAdminId()}"></b></td>
-                        <td><b th:text="${session.admin.getAdminName()}"></b></td>
-                        <td><b th:text="${session.admin.getAdminEmail()}"></b></td>
-                        <td><b th:text="${session.admin.getAdminPwd()}"></b></td>
+                        <td><b th:text="${session.user.getUserId()}"></b></td>
+                        <td><b th:text="${session.user.getUserName()}"></b></td>
+                        <td><b th:text="${session.user.getUserEmail()}"></b></td>
+                        <td><b th:text="${session.user.getUserPwd()}"></b></td>
                     </tr>
                 </table>
             </div>
@@ -53,7 +53,7 @@
                     <label class="layui-form-label">名字</label>
 
                     <div class="layui-input-block">
-                        <input type="text" name="adminName" th:value="${session.admin.getAdminName()}" id="name"
+                        <input type="text" name="adminName" th:value="${session.user.getUserName()}" id="name"
                                class="layui-input">
                     </div>
                 </div>
@@ -62,7 +62,7 @@
                     <label class="layui-form-label">邮箱</label>
 
                     <div class="layui-input-block">
-                        <input type="text" name="adminEmail" th:value="${session.admin.getAdminEmail()}" id="email"
+                        <input type="text" name="adminEmail" th:value="${session.user.getUserEmail()}" id="email"
                                class="layui-input">
                     </div>
                 </div>
@@ -72,7 +72,7 @@
 
                     <div class="layui-input-block">
                         <input type="text" name="adminPwd" id="password" class="layui-input"
-                               th:value="${session.admin.getAdminPwd()}">
+                               th:value="${session.user.getUserPwd()}">
                     </div>
                 </div>
 
