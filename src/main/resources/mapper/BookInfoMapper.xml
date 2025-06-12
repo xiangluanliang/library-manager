@@ -111,6 +111,34 @@
       order by ${orderByClause}
     </if>
   </select>
+  <!-- 实现 searchBooksWithInventory 方法的 SQL 查询 ,警告是未配置sql方言？-->
+
+  <select id="searchBooksWithInventory" parameterType="map" resultMap="BookInfoWithInventoryResultMap">
+    SELECT
+      bi.*,
+      inv.available_copies
+    FROM
+      book_info bi
+        LEFT JOIN
+      book_inventory inv ON bi.book_id = inv.book_id
+    WHERE
+      bi.title LIKE CONCAT('%', #{keyword}, '%')
+       OR bi.author LIKE CONCAT('%', #{keyword}, '%')
+      LIMIT #{offset}, #{pageSize}
+  </select>
+
+  <!-- 实现 countSearchedBooks 方法的 SQL 查询 -->
+  <select id="countSearchedBooks" parameterType="java.lang.String" resultType="java.lang.Long">
+    SELECT
+      COUNT(*)
+    FROM
+      book_info bi
+        LEFT JOIN
+      book_inventory inv ON bi.book_id = inv.book_id
+    WHERE
+      bi.title LIKE CONCAT('%', #{keyword}, '%')
+       OR bi.author LIKE CONCAT('%', #{keyword}, '%')
+  </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
     select 
     <include refid="Base_Column_List" />

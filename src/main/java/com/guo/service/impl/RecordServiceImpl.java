@@ -21,22 +21,27 @@ public class RecordServiceImpl implements IRecordService {
     /**
      * 分页查询所有借阅记录。
      */
+    /**
+     * 分页查询所有借阅记录。
+     */
     @Override
     public Page<BorrowRecordVo> findAllRecordsByPage(int pageNum) {
-        // TODO: 这是解决N+1查询的关键。你需要在BorrowRecordMapper.xml中创建一个新的查询和对应的ResultMap。
-        //  1. 创建一个新的<resultMap id="BorrowRecordVoResultMap" type="com.guo.domain.Vo.BorrowRecordVo">
-        //  2. 在ResultMap中，将user.user_name映射到userName属性，将book_info.title映射到bookTitle属性。
-        //  3. 创建一个新的<select id="selectAllWithDetailsByPage">，使用LEFT JOIN连接borrow_record, user, book_info三张表。
+        int pageSize = 10;
+        int offset = (pageNum - 1) * pageSize;
 
-        System.out.println("正在查询所有借阅记录，分页和JOIN查询逻辑待Mapper层实现...");
+        // 1. 调用Mapper获取分页后的数据列表
+        List<BorrowRecordVo> records = borrowRecordMapper.selectAllWithDetailsByPage(offset, pageSize);
+
+        // 2. 调用Mapper获取符合条件的总数
+        long totalCount = borrowRecordMapper.countAll();
+
+        // 3. 设置分页对象
         Page<BorrowRecordVo> page = new Page<>();
-        // int pageSize = 10;
-        // int offset = (pageNum - 1) * pageSize;
-        // List<BorrowRecordVo> records = borrowRecordMapper.selectAllWithDetailsByPage(offset, pageSize);
-        // long totalCount = borrowRecordMapper.countAll();
-        // page.setList(records);
-        // page.setTotalCount(totalCount);
-        // ...
+        page.setList(records);
+        //TODO:page.setTotalCount(totalCount);没有这个方法，这行代码的作用是将查询到的所有借阅记录的总数赋值给分页对象 Page 的 totalCount 字段。
+        page.setPageNum(pageNum);
+        page.setPageSize(pageSize);
+
         return page;
     }
 
@@ -45,11 +50,6 @@ public class RecordServiceImpl implements IRecordService {
      */
     @Override
     public List<BorrowRecordVo> findRecordsByUserId(int userId) {
-        // TODO: 与上面类似，在BorrowRecordMapper.xml中创建一个新的查询方法 findWithDetailsByUserId。
-        //  它也使用JOIN联表查询，但会根据传入的userId进行过滤。
-
-        System.out.println("正在查询用户 " + userId + " 的借阅记录，JOIN查询逻辑待Mapper层实现...");
-        // return borrowRecordMapper.findWithDetailsByUserId(userId);
-        return null; // 暂时返回null
+        return borrowRecordMapper.findWithDetailsByUserId(userId);
     }
 }
