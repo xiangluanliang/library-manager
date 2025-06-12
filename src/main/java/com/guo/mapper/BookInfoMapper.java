@@ -33,7 +33,14 @@ public interface BookInfoMapper {
     int updateByPrimaryKeyWithBLOBs(BookInfo record);
 
     int updateByPrimaryKey(BookInfo record);
-    List<BookInfo> searchBooksWithInventory(@Param("keyword") String keyword);
+    List<BookInfo> searchBooksWithInventory(@Param("keyword") String keyword, @Param("offset") int offset, @Param("pageSize") int pageSize);
+
+    /**
+     * 根据关键词统计符合条件的图书数量
+     * @param keyword 搜索关键词
+     * @return 符合条件的图书数量
+     */
+    long countSearchedBooks(@Param("keyword") String keyword);
 
 
 }
