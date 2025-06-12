@@ -39,6 +39,7 @@ public class BookServiceImpl implements IBookService {
         //  SQL示例: SELECT bi.*, inv.available_copies FROM book_info bi LEFT JOIN book_inventory inv ON bi.book_id = inv.book_id
         //  WHERE bi.title LIKE #{keyword} OR bi.author LIKE #{keyword}
         //  LIMIT #{offset}, #{pageSize}
+        //  这个TODO中下方注释中的一二条已经解决，参数和函数名都与下方一致。
 
         System.out.println("正在搜索图书，分页和JOIN查询逻辑待Mapper层实现...");
         Page<BookInfo> page = new Page<>();

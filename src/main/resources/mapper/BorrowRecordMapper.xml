@@ -9,6 +9,19 @@
     <result column="due_time" jdbcType="TIMESTAMP" property="dueTime" />
     <result column="status" jdbcType="CHAR" property="status" />
   </resultMap>
+    <!-- 其他已有的配置... -->
+
+    <!-- 定义新的 ResultMap -->
+  <resultMap id="BorrowRecordVoResultMap" type="com.guo.domain.Vo.BorrowRecordVo">
+    <id column="borrow_id" jdbcType="INTEGER" property="borrowId" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="book_id" jdbcType="INTEGER" property="bookId" />
+    <result column="borrow_time" jdbcType="TIMESTAMP" property="borrowTime" />
+    <result column="due_time" jdbcType="TIMESTAMP" property="dueTime" />
+    <result column="status" jdbcType="CHAR" property="status" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="title" jdbcType="VARCHAR" property="bookTitle" />
+  </resultMap>
   <sql id="Example_Where_Clause">
     <where>
       <foreach collection="oredCriteria" item="criteria" separator="or">
@@ -83,6 +96,51 @@
     <if test="orderByClause != null">
       order by ${orderByClause}
     </if>
+  </select>
+  <!-- 分页查询所有借阅记录并包含用户和图书详细信息 -->
+  <select id="selectAllWithDetailsByPage" parameterType="map" resultMap="BorrowRecordVoResultMap">
+    SELECT
+      br.borrow_id,
+      br.user_id,
+      br.book_id,
+      br.borrow_time,
+      br.due_time,
+      br.status,
+      u.user_name,
+      bi.title
+    FROM
+      borrow_record br
+        LEFT JOIN
+      user u ON br.user_id = u.user_id
+        LEFT JOIN
+      book_info bi ON br.book_id = bi.book_id
+      LIMIT #{offset}, #{pageSize}
+  </select>
+
+  <!-- 根据用户ID查询借阅记录并包含用户和图书详细信息 -->
+  <select id="findWithDetailsByUserId" parameterType="int" resultMap="BorrowRecordVoResultMap">
+    SELECT
+      br.borrow_id,
+      br.user_id,
+      br.book_id,
+      br.borrow_time,
+      br.due_time,
+      br.status,
+      u.user_name,
+      bi.title
+    FROM
+      borrow_record br
+        LEFT JOIN
+      user u ON br.user_id = u.user_id
+        LEFT JOIN
+      book_info bi ON br.book_id = bi.book_id
+    WHERE
+      br.user_id = #{userId}
+  </select>
+
+  <!-- 统计所有借阅记录数量 -->
+  <select id="countAll" resultType="java.lang.Long">
+    SELECT COUNT(*) FROM borrow_record
   </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
