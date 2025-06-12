@@ -32,6 +32,21 @@ public interface IUserService{
     boolean updateUserProfile(User userToUpdate);
 
 
+        /**
+     * 验证用户密码
+     * @param userId 用户ID
+     * @param password 待验证的密码
+     * @return 密码是否正确
+     */
+    boolean verifyPassword(Long userId, String password);
+
+    /**
+     * 根据ID删除用户（注销账号）
+     * @param userId 用户ID
+     * @return 是否删除成功
+     */
+    boolean deleteUserById(Long userId);
+
     /**
      * 用户借阅一本书。
      * @param bookId 准备借阅的图书ID
