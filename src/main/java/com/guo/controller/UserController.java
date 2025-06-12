@@ -1,7 +1,11 @@
 package com.guo.controller;
 
 import com.guo.domain.User;
+import com.guo.domain.Vo.BorrowRecordVo;
+import com.guo.service.IBookService;
 import com.guo.service.IUserService;
+import com.guo.service.impl.RecordServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +15,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
+import java.util.List;
+
 /**
  * 统一用户认证与普通用户功能控制器
  */
@@ -20,9 +26,15 @@ public class UserController {
     @Resource
     private IUserService userService;
 
-    // 预留借阅记录服务的注入点
-    // @Resource
-    // private IBorrowRecordService borrowRecordService;
+    @Resource
+    private IBookService bookService;
+    
+    @Autowired
+    private RecordServiceImpl recordServiceImpl;
+
+    //
+    //@Resource
+    //private IBorrowRecordService borrowRecordService;
 
     /**
      * 当用户访问根路径时，显示登录页面。
@@ -115,14 +127,25 @@ public class UserController {
      */
     @GetMapping("/user/records")
     public String showUserBorrowingRecords(Model model, HttpSession session) {
+        // 获取当前登录用户
         User currentUser = (User) session.getAttribute("user");
+        if (currentUser == null) {
+            // 如果用户未登录，重定向到登录页面
+            return "redirect:/";
+        }
 
+        // 调用服务获取借阅记录
+        List<BorrowRecordVo> records = recordServiceImpl.findRecordsByUserId(currentUser.getUserId());
+
+        // 将记录添加到模型
+        model.addAttribute("borrowingRecords", records);
+
+        return "user/borrowingBooksRecord";
+    }
         // TODO: 调用 borrowRecordService.findByUserId(currentUser.getUserId()) 获取借阅记录列表
         // List<BorrowRecord> records = borrowRecordService.findByUserId(currentUser.getUserId());
         // model.addAttribute("borrowingRecords", records);
 
-        return "user/borrowingBooksRecord";
-    }
 
     /**
      * 显示用户的个人信息页面
@@ -165,80 +188,17 @@ public class UserController {
         return "redirect:/user/profile";
     }
 
-    // ==========================================================
-    // ==                  账号注销功能                         ==
-    // ==========================================================
-
-    /**
-     * 显示账号注销确认页面
-     * @return 注销确认页面视图名
-     */
-    @GetMapping("/user/delete-account")
-    public String showDeleteAccountPage() {
-        return "user/deleteAccount";
-    }
-
-    /**
-     * 处理账号注销请求
-     * @param password 用户输入的密码用于确认
-     * @param session 当前会话
-     * @param redirectAttributes 重定向属性，用于传递消息
-     * @return 重定向到登录页面
-     */
-    @PostMapping("/user/delete-account")
-    public String deleteUserAccount(@RequestParam("password") String password,
-                                    HttpSession session,
-                                    RedirectAttributes redirectAttributes) {
-
-        // 获取当前登录用户
-        User currentUser = (User) session.getAttribute("user");
-        if (currentUser == null) {
-            // 用户未登录，重定向到登录页面
-            return "redirect:/";
-        }
-
-        // 验证密码是否正确
-        boolean passwordValid = userService.verifyPassword(Long.valueOf(currentUser.getUserId()), password);
-
-        if (passwordValid) {
-            // 执行账号注销
-            boolean deleted = userService.deleteUserById(Long.valueOf(currentUser.getUserId()));
-
-            if (deleted) {
-                // 账号删除成功，使会话失效
-                session.invalidate();
-                redirectAttributes.addFlashAttribute("message", "您的账号已成功注销");
-                return "redirect:/";
-            } else {
-                redirectAttributes.addFlashAttribute("error", "账号注销失败，请稍后再试");
-                return "redirect:/user/delete-account";
-            }
-        } else {
-            redirectAttributes.addFlashAttribute("error", "密码错误，请重新输入");
-            return "redirect:/user/delete-account";
-        }
-    }
-    
     /**
      * 显示可借阅的图书列表及借书页面
      * @return 借书页面视图名
      */
     @GetMapping("/user/borrow")
-    public String showBorrowPage() {
+    public String showBorrowPage(Model model, HttpSession session) {
+
         // 这个页面通常会显示所有可借阅的图书列表
         // TODO: 调用 bookService获取图书列表并添加到Model中
         return "user/borrowingBooks";
     }
 
-    /**
 
-     * 显示还书页面
-     * @return 还书页面视图名
-     */
-    @GetMapping("/user/return")
-    public String showReturnPage() {
-        // 这个页面通常会显示当前用户已借阅且未归还的图书列表
-        // TODO: 调用borrowRecordService获取记录并添加到Model中
-        return "user/returnBooks";
-    }
 }
