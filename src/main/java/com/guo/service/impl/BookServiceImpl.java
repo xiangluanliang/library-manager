@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 图书服务实现类
@@ -32,26 +33,31 @@ public class BookServiceImpl implements IBookService {
      * @param pageNum 当前页码
      * @return 分页结果
      */
+    /**
+     * 根据关键词搜索图书并分页。
+     * @param keyword 搜索关键词
+     * @param pageNum 当前页码
+     * @return 分页结果
+     */
     @Override
     public Page<BookInfo> searchAndPaginate(String keyword, int pageNum) {
-        // TODO: 这是解决N+1查询的关键。你需要在BookInfoMapper.xml中创建一个新的查询方法，
-        //  例如 "searchBooksWithInventory"，该方法使用LEFT JOIN连接book_info和book_inventory表。
-        //  SQL示例: SELECT bi.*, inv.available_copies FROM book_info bi LEFT JOIN book_inventory inv ON bi.book_id = inv.book_id
-        //  WHERE bi.title LIKE #{keyword} OR bi.author LIKE #{keyword}
-        //  LIMIT #{offset}, #{pageSize}
-        //  这个TODO中下方注释中的一二条已经解决，参数和函数名都与下方一致。
+        int pageSize = 10;
+        int offset = (pageNum - 1) * pageSize;
 
-        System.out.println("正在搜索图书，分页和JOIN查询逻辑待Mapper层实现...");
-        Page<BookInfo> page = new Page<>();
         // 1. 调用Mapper获取分页后的数据列表
-        // List<BookInfo> books = bookInfoMapper.searchBooksWithInventory(keyword, (pageNum-1)*10, 10);
-        // page.setList(books);
+        List<BookInfo> books = bookInfoMapper.searchBooksWithInventory(keyword, offset, pageSize);
+
         // 2. 调用Mapper获取符合条件的总数
-        // long totalCount = bookInfoMapper.countSearchedBooks(keyword);
-        // page.setTotalCount(totalCount);
-        // 3. 设置其他分页参数
-        // ...
-        return page; // 暂时返回空对象
+        long totalCount = bookInfoMapper.countSearchedBooks(keyword);
+
+        // 3. 设置分页对象
+        Page<BookInfo> page = new Page<>();
+        page.setList(books);
+        //page.setTotalCount(totalCount);TODO：没有一个同样的方法，同样无伤大雅
+        page.setPageNum(pageNum);
+        page.setPageSize(pageSize);
+
+        return page;
     }
 
     /**
