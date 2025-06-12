@@ -83,7 +83,7 @@
             </div>
 
             <div class="layui-form-item" style="margin-top: 30px;">
-                <button class="layui-btn layui-btn-normal" lay-submit lay-filter="*">登 录</button>
+                <button id="submit" class="layui-btn layui-btn-normal" lay-submit lay-filter="*">登 录</button>
             </div>
         </form>
     </div>
@@ -93,6 +93,7 @@
 <script th:src="@{/layui/layui.all.js}"></script>
 
 <script>
+
     layui.use(['layer', 'form'], function () {
         var layer = layui.layer;
         var form = layui.form;

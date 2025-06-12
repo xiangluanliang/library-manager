@@ -33,4 +33,7 @@ public interface BookInfoMapper {
     int updateByPrimaryKeyWithBLOBs(BookInfo record);
 
     int updateByPrimaryKey(BookInfo record);
+    List<BookInfo> searchBooksWithInventory(@Param("keyword") String keyword);
+
+
 }
