@@ -1,7 +1,7 @@
 package com.guo.service;
 
 import com.guo.domain.BookInfo;
-// 导入你的分页工具类
+import com.guo.domain.Vo.BookInfoVo;
 import com.guo.utils.page.Page;
 
 /**
@@ -12,11 +12,12 @@ public interface IBookService {
 
     /**
      * 根据关键词搜索图书并进行分页。
-     * @param keyword 搜索关键词（可匹配书名、作者等）
+     * @param field 搜索字段
+     * @param keyword 搜索关键词
      * @param pageNum 当前页码
      * @return 封装了图书列表和分页信息的Page对象。
      */
-    Page<BookInfo> searchAndPaginate(String keyword, int pageNum);
+    Page<BookInfoVo> searchAndPaginate(String field, String keyword, int pageNum);
 
     /**
      * 新增一本图书。

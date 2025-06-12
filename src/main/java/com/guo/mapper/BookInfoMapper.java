@@ -2,8 +2,10 @@ package com.guo.mapper;
 
 import com.guo.domain.BookInfo;
 import com.guo.domain.BookInfoExample;
-import java.util.List;
+import com.guo.domain.Vo.BookInfoVo;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface BookInfoMapper {
     long countByExample(BookInfoExample example);
@@ -33,14 +35,22 @@ public interface BookInfoMapper {
     int updateByPrimaryKeyWithBLOBs(BookInfo record);
 
     int updateByPrimaryKey(BookInfo record);
-    List<BookInfo> searchBooksWithInventory(@Param("keyword") String keyword, @Param("offset") int offset, @Param("pageSize") int pageSize);
+    /**
+     * 高级搜索的Mapper方法
+     */
+    List<BookInfoVo> searchAdvanced(@Param("field") String field, @Param("keyword") String keyword, @Param("offset") int offset, @Param("pageSize") int pageSize);
+
+    /**
+     * 与高级搜索配套的数量统计方法
+     */
+    int countAdvanced(@Param("field") String field, @Param("keyword") String keyword);
 
     /**
      * 根据关键词统计符合条件的图书数量
      * @param keyword 搜索关键词
      * @return 符合条件的图书数量
      */
-    long countSearchedBooks(@Param("keyword") String keyword);
+    int countSearchedBooks(@Param("keyword") String keyword);
 
 
 }

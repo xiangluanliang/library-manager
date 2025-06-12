@@ -111,33 +111,65 @@
       order by ${orderByClause}
     </if>
   </select>
-  <!-- 实现 searchBooksWithInventory 方法的 SQL 查询 ,警告是未配置sql方言？-->
+  <resultMap id="BookInfoVoResultMap" type="com.guo.domain.Vo.BookInfoVo" extends="BaseResultMap">
+    <result column="available_copies" jdbcType="INTEGER" property="availableCopies" />
+    <result column="total_copies" jdbcType="INTEGER" property="totalCopies" />
+</resultMap>
 
-  <select id="searchBooksWithInventory" parameterType="map" resultMap="BookInfoWithInventoryResultMap">
+  <select id="searchAdvanced" resultMap="BookInfoVoResultMap">
     SELECT
-      bi.*,
-      inv.available_copies
+    bi.*,
+    inv.available_copies,
+    inv.total_copies
     FROM
-      book_info bi
-        LEFT JOIN
-      book_inventory inv ON bi.book_id = inv.book_id
-    WHERE
-      bi.title LIKE CONCAT('%', #{keyword}, '%')
-       OR bi.author LIKE CONCAT('%', #{keyword}, '%')
-      LIMIT #{offset}, #{pageSize}
+    book_info bi
+    LEFT JOIN
+    book_inventory inv ON bi.book_id = inv.book_id
+    <where>
+      <if test="keyword != null and keyword != ''">
+        <choose>
+          <when test="field == 'author'">
+            bi.author LIKE #{keyword}
+          </when>
+          <when test="field == 'isbn'">
+            bi.isbn LIKE #{keyword}
+          </when>
+          <when test="field == 'publisher'">
+            bi.publisher LIKE #{keyword}
+          </when>
+          <otherwise>
+            bi.title LIKE #{keyword}
+          </otherwise>
+        </choose>
+      </if>
+    </where>
+    ORDER BY bi.book_id DESC
+    LIMIT #{offset}, #{pageSize}
   </select>
-
-  <!-- 实现 countSearchedBooks 方法的 SQL 查询 -->
-  <select id="countSearchedBooks" parameterType="java.lang.String" resultType="java.lang.Long">
+  <select id="countAdvanced" resultType="int">
     SELECT
-      COUNT(*)
+    COUNT(*)
     FROM
-      book_info bi
-        LEFT JOIN
-      book_inventory inv ON bi.book_id = inv.book_id
-    WHERE
-      bi.title LIKE CONCAT('%', #{keyword}, '%')
-       OR bi.author LIKE CONCAT('%', #{keyword}, '%')
+    book_info bi
+
+    <where>
+      <if test="keyword != null and keyword != ''">
+        <choose>
+          <when test="field == 'author'">
+            bi.author LIKE #{keyword}
+          </when>
+          <when test="field == 'isbn'">
+            bi.isbn LIKE #{keyword}
+          </when>
+          <when test="field == 'publisher'">
+            bi.publisher LIKE #{keyword}
+          </when>
+          <otherwise>
+            bi.title LIKE #{keyword}
+          </otherwise>
+        </choose>
+      </if>
+    </where>
   </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
     select 

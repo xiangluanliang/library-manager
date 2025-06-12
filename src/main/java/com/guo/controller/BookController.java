@@ -2,11 +2,15 @@ package com.guo.controller;
 
 import com.guo.domain.BookCategory;
 import com.guo.domain.BookInfo;
+import com.guo.domain.Vo.BookInfoVo;
+import com.guo.service.IBookService;
+import com.guo.utils.page.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -17,32 +21,46 @@ import java.util.List;
 @RequestMapping("/books") // 为所有图书相关请求添加"/books"前缀
 public class BookController {
 
-    // TODO: 后续需要注入重构后的IBookService和IBookCategoryService
-    // @Resource
-    // private IBookService bookService;
+    // TODO: 后续需要注入重构后的IBookCategoryService
+     @Resource
+     private IBookService bookService;
     // @Resource
     // private IBookCategoryService bookCategoryService;
 
 
     /**
-     * （用户功能）显示图书搜索/列表页面
-     * @param keyword  搜索关键词，可以为空
-     * @param pageNum  当前页码
-     * @param model    Model对象
-     * @return 图书列表视图
+     * （用户功能）处理高级搜索请求并展示结果页面。
+     * @param field    搜索字段 (从前端的<select name="field">获取)，默认为'title'
+     * @param keyword  搜索关键词 (从前端的<input name="keyword">获取)
+     * @param pageNum  当前页码 (从分页链接或表单获取)
+     * @param source  请求来源，用户和管理员返回不同界面
+     * @param model    用于向视图传递数据的Model对象
+     * @return 返回到图书搜索结果页面的视图名
      */
     @GetMapping("/search")
-    public String searchBooks(@RequestParam(value = "keyword", required = false) String keyword,
-                              @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
-                              Model model) {
+    public String searchBooks(
+            @RequestParam(value = "field", defaultValue = "title") String field,
+            @RequestParam(value = "keyword", required = false) String keyword,
+            @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+            @RequestParam(value = "source", required = false) String source,
+            Model model) {
 
-        // TODO: 在IBookService中实现图书搜索和分页功能
-        // Page<BookInfo> bookPage = bookService.searchAndPaginate(keyword, pageNum);
-        // model.addAttribute("page", bookPage);
-        // model.addAttribute("keyword", keyword);
+        // 1. 调用Service层，执行真正的搜索和分页逻辑
+        Page<BookInfoVo> bookPage = bookService.searchAndPaginate(field, keyword, pageNum);
 
-        System.out.println("正在搜索图书，逻辑待实现...");
-        return "user/findBook"; // 对应旧的 user/findBook.html
+        // 2. 将Service返回的结果和用户之前的搜索条件都放入Model中
+        //    这样，前端Thymeleaf模板就可以通过 ${page}, ${searchField}, ${keyword} 来访问这些数据
+        model.addAttribute("page", bookPage);             // 包含图书列表和分页信息的Page对象
+        model.addAttribute("searchField", field);       // 用于回显用户选择的搜索字段
+        model.addAttribute("keyword", keyword);         // 用于回显用户输入的关键词
+        model.addAttribute("source", source);
+
+        // 3. 返回逻辑视图名，Spring MVC会找到并渲染这个HTML文件
+        if ("admin".equals(source)) {
+            return "admin/showBooks";
+        } else {
+            return "user/findBook";
+        }
     }
 
 

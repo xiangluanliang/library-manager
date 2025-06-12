@@ -2,6 +2,7 @@ package com.guo.service.impl;
 
 import com.guo.domain.BookInfo;
 import com.guo.domain.BookInventory;
+import com.guo.domain.Vo.BookInfoVo;
 import com.guo.mapper.BookInfoMapper;
 import com.guo.mapper.BookInventoryMapper;
 import com.guo.service.IBookService;
@@ -10,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 图书服务实现类
@@ -28,30 +31,35 @@ public class BookServiceImpl implements IBookService {
 
     /**
      * 根据关键词搜索图书并分页。
+     * @param field 搜索字段
      * @param keyword 搜索关键词
      * @param pageNum 当前页码
      * @return 分页结果
      */
     @Override
-    public Page<BookInfo> searchAndPaginate(String keyword, int pageNum) {
-        // TODO: 这是解决N+1查询的关键。你需要在BookInfoMapper.xml中创建一个新的查询方法，
-        //  例如 "searchBooksWithInventory"，该方法使用LEFT JOIN连接book_info和book_inventory表。
-        //  SQL示例: SELECT bi.*, inv.available_copies FROM book_info bi LEFT JOIN book_inventory inv ON bi.book_id = inv.book_id
-        //  WHERE bi.title LIKE #{keyword} OR bi.author LIKE #{keyword}
-        //  LIMIT #{offset}, #{pageSize}
-        //  这个TODO中下方注释中的一二条已经解决，参数和函数名都与下方一致。
+    public Page<BookInfoVo> searchAndPaginate(String field, String keyword, int pageNum) {
+        System.out.println("【Service层】正在执行高级搜索: 字段=" + field + ", 关键词=" + keyword + ", 页码=" + pageNum);
+        Page<BookInfoVo> page = new Page<>();
+        page.setList(new ArrayList<>());
+        int pageSize = 10;
+        int offset = (pageNum - 1) * pageSize;
+        String searchKeyword = (keyword != null && !keyword.trim().isEmpty()) ? "%" + keyword.trim() + "%" : null;
+//         1. 调用Mapper获取分页后的数据列表
+        List<BookInfoVo> books = bookInfoMapper.searchAdvanced(field, searchKeyword, offset, pageSize);
+        if (books != null) {
+            page.setList(books);
+        }
+//         2. 调用Mapper获取符合条件的总数
+        int totalCount = bookInfoMapper.countAdvanced(field, searchKeyword);
+        page.setPageCount(totalCount);
+        page.setPageNum(pageNum);
+        page.setPageSize(pageSize);
+        page.setPageCount((int) Math.ceil((double) totalCount / pageSize));
+        if (page.getPageCount() == 0) {
+            page.setPageCount(1);
+        }
 
-        System.out.println("正在搜索图书，分页和JOIN查询逻辑待Mapper层实现...");
-        Page<BookInfo> page = new Page<>();
-        // 1. 调用Mapper获取分页后的数据列表
-        // List<BookInfo> books = bookInfoMapper.searchBooksWithInventory(keyword, (pageNum-1)*10, 10);
-        // page.setList(books);
-        // 2. 调用Mapper获取符合条件的总数
-        // long totalCount = bookInfoMapper.countSearchedBooks(keyword);
-        // page.setTotalCount(totalCount);
-        // 3. 设置其他分页参数
-        // ...
-        return page; // 暂时返回空对象
+        return page;
     }
 
     /**
