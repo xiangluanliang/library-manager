@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 管理员服务实现类
@@ -25,28 +26,24 @@ public class AdminServiceImpl implements IAdminService {
      */
     @Override
     public Page<User> findAllUsersByPage(int pageNum) {
-        // TODO: 此处需要你根据你自己的分页工具类(Page)和UserMapper进行实现。
-        // 下面是一个通用的实现逻辑示例，你需要替换成你自己的方法。
-
         Page<User> page = new Page<>();
         int pageSize = 10; // 假设每页10条
         int offset = (pageNum - 1) * pageSize;
 
-        // 1. 查询当前页的用户列表 (你需要在UserMapper.xml中创建一个带LIMIT和OFFSET的查询)
-        // List<User> users = userMapper.selectAllUsersWithLimit(offset, pageSize);
-        // page.setList(users);
+        // 1. 查询当前页的用户列表
+        List<User> users = userMapper.selectAllUsersWithLimit(offset, pageSize);
+        page.setList(users);
 
         // 2. 查询用户总数
-        // long totalCount = userMapper.countByExample(new UserExample());
-        // page.setTotalCount(totalCount);
+        long totalCount = userMapper.countByExample();
+        //TODO:page.setTotalCount(totalCount);totalcount
 
         // 3. 设置其他分页参数
-        // page.setPageNum(pageNum);
-        // page.setPageSize(pageSize);
-        // ...
+        page.setPageNum(pageNum);
+        page.setPageSize(pageSize);
+        int pageCount = (int) (totalCount % pageSize == 0 ? totalCount / pageSize : totalCount / pageSize + 1);
+        page.setPageCount(pageCount);
 
-        // 暂时返回一个空的分页对象，防止控制器报错
-        System.out.println("正在查询所有用户，分页逻辑待实现...");
         return page;
     }
 

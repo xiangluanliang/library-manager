@@ -27,4 +27,10 @@ public interface BookCategoryMapper {
     int updateByPrimaryKeySelective(BookCategory record);
 
     int updateByPrimaryKey(BookCategory record);
+    /**
+     * 统计指定分类下的图书数量
+     * @param categoryId 分类ID
+     * @return 图书数量
+     */
+    int countByCategoryId(int categoryId);
 }

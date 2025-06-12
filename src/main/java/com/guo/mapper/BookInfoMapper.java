@@ -52,6 +52,11 @@ public interface BookInfoMapper {
      * @return 符合条件的图书数量
      */
     int countSearchedBooks(@Param("keyword") String keyword);
-
+    /**
+     * 统计指定分类下的图书数量
+     * @param categoryId 分类ID
+     * @return 图书数量
+     */
+    int countByCategoryId(int categoryId);
 
 }

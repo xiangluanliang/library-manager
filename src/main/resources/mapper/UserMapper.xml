@@ -207,6 +207,18 @@
     from user
     where user_id = #{userId,jdbcType=INTEGER}
   </select>
+  <!-- 查询当前页的用户列表 -->
+  <select id="selectAllUsersWithLimit" parameterType="map" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM user
+    LIMIT #{offset}, #{pageSize}
+  </select>
+
+  <!-- 查询用户总数 -->
+  <select id="countByExample" resultType="long">
+    SELECT COUNT(*) FROM user
+  </select>
   <update id="updateByPrimaryKeySelective" parameterType="com.guo.domain.User">
     update user
     <set>

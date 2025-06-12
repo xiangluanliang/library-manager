@@ -3,6 +3,7 @@ package com.guo.controller;
 import com.guo.domain.BookCategory;
 import com.guo.domain.BookInfo;
 import com.guo.domain.Vo.BookInfoVo;
+import com.guo.service.IBookCategoryService;
 import com.guo.service.IBookService;
 import com.guo.utils.page.Page;
 import org.springframework.stereotype.Controller;
@@ -21,11 +22,11 @@ import java.util.List;
 @RequestMapping("/books") // 为所有图书相关请求添加"/books"前缀
 public class BookController {
 
-    // TODO: 后续需要注入重构后的IBookCategoryService
+
      @Resource
      private IBookService bookService;
-    // @Resource
-    // private IBookCategoryService bookCategoryService;
+     @Resource
+     private IBookCategoryService bookCategoryService;
 
 
     /**
@@ -73,14 +74,14 @@ public class BookController {
      * @return 重定向到图书管理页面
      */
     @PostMapping("/admin/add")
-    public String addBook(BookInfo bookInfo, RedirectAttributes redirectAttributes) {
-        // TODO: 在IBookService中实现添加图书的逻辑
-        // boolean success = bookService.addNewBook(bookInfo);
-        // if (success) {
-        //     redirectAttributes.addFlashAttribute("message", "图书《" + bookInfo.getTitle() + "》添加成功！");
-        // } else {
-        //     redirectAttributes.addFlashAttribute("error", "添加失败，ISBN可能已存在。");
-        // }
+    public String addBook(BookInfoVo bookInfo, RedirectAttributes redirectAttributes) {
+
+         boolean success = bookService.addNewBook(bookInfo,bookInfo.getTotalCopies());
+         if (success) {
+             redirectAttributes.addFlashAttribute("message", "图书《" + bookInfo.getTitle() + "》添加成功！");
+         } else {
+             redirectAttributes.addFlashAttribute("error", "添加失败，ISBN可能已存在。");
+         }
         return "redirect:/admin/books"; // 操作结束后重定向到管理员的图书列表页
     }
 
@@ -92,11 +93,11 @@ public class BookController {
     @PostMapping("/admin/delete")
     @ResponseBody
     public String deleteBook(@RequestParam("bookId") int bookId) {
-        // TODO: 在IBookService中实现删除图书的逻辑
+
         // 注意：删除前需要检查该书是否还有未归还的借阅记录
-        // boolean success = bookService.deleteBookById(bookId);
-        // return success ? "true" : "false";
-        return "true";
+         boolean success = bookService.deleteBookById(bookId);
+         return success ? "true" : "false";
+
     }
 
 
@@ -109,10 +110,9 @@ public class BookController {
     @GetMapping("/categories/all")
     @ResponseBody
     public List<BookCategory> getAllBookCategories() {
-        // TODO: 在IBookCategoryService中实现查询所有分类的逻辑
-        // return bookCategoryService.findAll();
-        System.out.println("正在获取所有图书分类，逻辑待实现...");
-        return null; // 暂时返回null
+
+         return bookCategoryService.findAll();
+        // 暂时返回null
     }
 
     /**
@@ -123,10 +123,10 @@ public class BookController {
     @PostMapping("/categories/admin/add")
     @ResponseBody
     public String addBookCategory(BookCategory bookCategory) {
-        // TODO: 在IBookCategoryService中实现添加分类的逻辑
-        // boolean success = bookCategoryService.addCategory(bookCategory);
-        // return success ? "true" : "false";
-        return "true";
+
+         boolean success = bookCategoryService.addCategory(bookCategory);
+         return success ? "true" : "false";
+
     }
 
     /**
@@ -137,10 +137,10 @@ public class BookController {
     @PostMapping("/categories/admin/delete")
     @ResponseBody
     public String deleteBookCategory(@RequestParam("categoryId") int categoryId) {
-        // TODO: 在IBookCategoryService中实现删除分类的逻辑
+
         // 注意：删除前需要检查该分类下是否还有图书
-        // boolean success = bookCategoryService.deleteCategoryById(categoryId);
-        // return success ? "true" : "false";
-        return "true";
+         boolean success = bookCategoryService.deleteCategoryById(categoryId);
+         return success ? "true" : "false";
+
     }
 }
