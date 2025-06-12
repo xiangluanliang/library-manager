@@ -54,9 +54,9 @@
                     <a href="javascript:;">&#xe705;</i> 借阅管理</a>
                     <dl class="layui-nav-child">
                         <dd th:class="${activePage == 'borrowRecord'} ? 'layui-this'">
-                            <a href="/userBorrowBookRecord">借书记录</a></dd>
+                            <a href="/user/records">借书记录</a></dd>
                         <dd th:class="${activePage == 'borrowOp'} ? 'layui-this'">
-                            <a href="/borrowingPage">借阅书籍</a></dd>
+                            <a href="/user/borrow">借阅书籍</a></dd>
                     </dl>
                 </li>
 
@@ -65,15 +65,15 @@
                     <a href="javascript:;">&#xe857;</i> 书籍管理</a>
                     <dl class="layui-nav-child">
                         <dd th:class="${activePage == 'bookReturn'} ? 'layui-this'"
-                        ><a href="/userReturnBooksPage">归还书籍</a></dd>
+                        ><a href="/user/return">归还书籍</a></dd>
                         <dd th:class="${activePage == 'bookSearch'} ? 'layui-this'"
-                        ><a href="/findBookPage">查询书籍</a></dd>
+                        ><a href="/books/search">查询书籍</a></dd>
                     </dl>
                 </li>
 
                 <li class="layui-nav-item"
                     th:classappend="${activePage == 'userInfo'} ? ' layui-this'">
-                    <a href="/userMessagePage">&#xe66f;</i> 个人信息</a>
+                    <a href="/user/profile">&#xe66f;</i> 个人信息</a>
                 </li>
 
             </ul>

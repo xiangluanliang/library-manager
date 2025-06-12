@@ -54,13 +54,13 @@
           <a href="javascript:;"><i class="layui-icon">&#xe857;</i> 书籍管理</a>
           <dl class="layui-nav-child">
             <dd th:class="${activePage == 'bookAdd'} ? 'layui-this'">
-              <a href="/addBookPage">录入新书</a>
+              <a href="/admin/books/add">录入新书</a>
             </dd>
             <dd th:class="${activePage == 'bookCategory'} ? 'layui-this'">
-              <a href="/addCategoryPage?pageNum=1">新建类别</a>
+              <a href="/admin/categories">新建类别</a>
             </dd>
             <dd th:class="${activePage == 'bookShow'} ? 'layui-this'">
-              <a href="/showBooksPage">查询书籍</a>
+              <a href="/books/search">查询书籍</a>
             </dd>
           </dl>
         </li>
@@ -70,10 +70,10 @@
           <a href="javascript:;"><i class="layui-icon">&#xe770;</i> 用户管理</a>
           <dl class="layui-nav-child">
             <dd th:class="${activePage == 'userShow'} ? 'layui-this'">
-              <a href="/showUsersPage?pageNum=1">查询用户</a>
+              <a href="/admin/users">查询用户</a>
             </dd>
             <dd th:class="${activePage == 'userAdd'} ? 'layui-this'">
-              <a href="/addUserPage">新增用户</a>
+              <a href="/admin/users/add">新增用户</a>
             </dd>
           </dl>
         </li>
@@ -83,14 +83,14 @@
           <a href="javascript:;"><i class="layui-icon">&#xe705;</i> 借阅信息</a>
           <dl class="layui-nav-child">
             <dd th:class="${activePage == 'borrowAll'} ? 'layui-this'">
-              <a href="/allBorrowBooksRecordPage?pageNum=1">所有记录</a>
+              <a href="/admin/records/borrowing">所有记录</a>
             </dd>
           </dl>
         </li>
 
         <li class="layui-nav-item"
             th:classappend="${activePage == 'adminInfo'} ? ' layui-this'">
-          <a href="/adminInfoPage"><i class="layui-icon">&#xe66f;</i> 个人信息</a>
+          <a href="/admin/profile"><i class="layui-icon">&#xe66f;</i> 个人信息</a>
         </li>
 
       </ul>

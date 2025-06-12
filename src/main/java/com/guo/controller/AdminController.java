@@ -171,7 +171,11 @@ public class AdminController {
      * @return 个人信息视图
      */
     @GetMapping("/profile")
-    public String showAdminProfilePage() {
+    public String showAdminProfilePage(Model model, HttpSession session) {
+        User currentUser = (User) session.getAttribute("user");
+        // 从数据库重新获取最新的用户信息，防止session中数据过时
+        User freshUser = userService.findUserById(currentUser.getUserId());
+        model.addAttribute("profileUser", freshUser);
         return "admin/adminInfo";
     }
 
