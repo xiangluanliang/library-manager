@@ -50,4 +50,11 @@ public interface BorrowRecordMapper {
      * @return 借阅记录总数
      */
     long countAll();
+
+
+    // 统计某本书未归还的借阅记录数量
+    long countOutstandingByBookId(@Param("bookId") int bookId);
+
+    // 统计用户已借阅的图书数量
+    int countBorrowedBooksByUserId(@Param("userId") int userId);
 }

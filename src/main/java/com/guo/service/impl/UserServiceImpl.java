@@ -1,12 +1,17 @@
 package com.guo.service.impl;
 
+import com.guo.domain.BookInventory;
+import com.guo.domain.BorrowRecord;
 import com.guo.domain.User;
+import com.guo.mapper.BookInventoryMapper;
+import com.guo.mapper.BorrowRecordMapper;
 import com.guo.mapper.UserMapper;
 import com.guo.service.IUserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.Date;
 
 /**
  * 用户服务实现类
@@ -18,11 +23,11 @@ public class UserServiceImpl implements IUserService {
     @Resource
     private UserMapper userMapper;
 
-    // TODO: 后续实现具体业务时，注入新的Mapper
-    // @Resource
-    // private BorrowRecordMapper borrowRecordMapper;
-    // @Resource
-    // private BookInventoryMapper bookInventoryMapper;
+
+     @Resource
+     private BorrowRecordMapper borrowRecordMapper;
+     @Resource
+     private BookInventoryMapper bookInventoryMapper;
 
     /**
      * 用户登录的核心实现
@@ -92,7 +97,7 @@ public class UserServiceImpl implements IUserService {
 
 
     /**
-     * 用户借书（未来需要实现的业务）
+     * 用户借书
      * @param bookId 图书ID
      * @param userId 用户ID
      * @return 借阅成功返回true，否则返回false
@@ -100,16 +105,46 @@ public class UserServiceImpl implements IUserService {
     @Override
     @Transactional
     public boolean borrowBook(int bookId, int userId) {
-        // TODO: 实现完整的借书业务逻辑
-        // 1. 检查用户借书数量是否已达上限 (查询user表或borrow_record表)
-        // 2. 检查图书库存是否充足 (查询book_inventory表的available_copies)
-        // 3. 如果可以借，则更新book_inventory表的available_copies数量（减1）
-        // 4. 在borrow_record表中插入一条新的借阅记录，状态为'borrowed'
-        // 5. 如果以上任一步失败，则事务回滚，借书失败
-        System.out.println("用户 " + userId + " 正在尝试借阅图书 " + bookId + "（逻辑待实现）");
-        return false; // 暂时返回false
-    }
+        // 1. 检查用户借书数量是否已达上限 (查询borrow_record表)
+        int borrowCount = borrowRecordMapper.countBorrowedBooksByUserId(userId);
+        int borrowLimit = 3; // 假设用户最多可借3本书
+        if (borrowCount >= borrowLimit) {
+            System.out.println("用户 " + userId + " 借书数量已达上限，无法继续借书。");
+            return false;
+        }
 
+        // 2. 检查图书库存是否充足 (查询book_inventory表的available_copies)
+        BookInventory bookInventory = bookInventoryMapper.selectByBookId(bookId);
+        if (bookInventory == null || bookInventory.getAvailableCopies() <= 0) {
+            System.out.println("图书 " + bookId + " 库存不足，无法借阅。");
+            return false;
+        }
+
+        // 3. 如果可以借，则更新book_inventory表的available_copies数量（减1）
+        bookInventory.setAvailableCopies(bookInventory.getAvailableCopies() - 1);
+        int updateCount = bookInventoryMapper.updateByPrimaryKeySelective(bookInventory);
+        if (updateCount <= 0) {
+            System.out.println("更新图书 " + bookId + " 库存失败，无法借阅。");
+            return false;
+        }
+
+        // 4. 在borrow_record表中插入一条新的借阅记录，状态为'borrowed'
+        BorrowRecord borrowRecord = new BorrowRecord();
+        borrowRecord.setUserId(userId);
+        borrowRecord.setBookId(bookId);
+        borrowRecord.setBorrowTime(new Date());
+        // 假设借阅期限为30天
+        long dueTime = System.currentTimeMillis() + 30 * 24 * 60 * 60 * 1000;
+        borrowRecord.setDueTime(new Date(dueTime));
+        borrowRecord.setStatus("borrowed");
+        int insertCount = borrowRecordMapper.insertSelective(borrowRecord);
+        if (insertCount <= 0) {
+            System.out.println("插入借阅记录失败，无法借阅。");
+            return false;
+        }
+
+        return true;
+    }
     /**
      * 用户还书（未来需要实现的业务）
      * @param bookId 图书ID

@@ -83,6 +83,16 @@
       order by ${orderByClause}
     </if>
   </select>
+  <!-- 根据图书ID删除库存记录 -->
+  <delete id="deleteByBookId" parameterType="int">
+    DELETE FROM book_inventory
+    WHERE book_id = #{bookId}
+  </delete>
+  <select id="selectByBookId" parameterType="int" resultType="com.guo.domain.BookInventory">
+    SELECT *
+    FROM book_inventory
+    WHERE book_id = #{bookId}
+  </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
