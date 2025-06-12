@@ -149,6 +149,12 @@
     WHERE book_id = #{bookId}
       AND status NOT IN ('returned')
   </select>
+  <select id="countBorrowedBooksByUserId" parameterType="int" resultType="int">
+    SELECT COUNT(*)
+    FROM borrow_record
+    WHERE user_id = #{userId}
+      AND status = 'borrowed'
+  </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
