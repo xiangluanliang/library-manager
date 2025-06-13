@@ -19,7 +19,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="record : ${page.list}">
+                <tr th:each="record : ${borrowPage.list}">
                     <td th:text="${record.borrowId}"></td>
                     <td th:text="${record.bookTitle}"></td>
                     <td th:text="${record.userName}"></td>
@@ -30,6 +30,36 @@
                         <span th:if="${record.status == 'overdue'}" class="layui-badge layui-bg-orange">已逾期</span>
                         <span th:if="${record.status == 'returned'}" class="layui-badge layui-bg-green">已归还</span>
                     </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="panel">
+            <h2 style="text-align:center; margin-bottom: 20px;">全部预约记录</h2>
+            <hr>
+            <table class="layui-table">
+                <thead>
+                <tr>
+                    <th>预约ID</th><th>书名</th><th>预约人</th><th>预约时间</th><th>失效时间</th><th>状态</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="record : ${reservePage.list}">
+                    <td th:text="${record.reserveId}"></td>
+                    <td th:text="${record.bookTitle}"></td>
+                    <td th:text="${record.userId}"></td>
+                    <td th:text="${#dates.format(record.reserveTime, 'yyyy-MM-dd HH:mm')}"></td>
+                    <td th:text="${#dates.format(record.expireTime, 'yyyy-MM-dd HH:mm')}"></td>
+                    <td>
+                        <span th:if="${record.status == 'pending'}" class="layui-badge layui-bg-blue">等待中</span>
+                        <span th:if="${record.status == 'fulfilled'}" class="layui-badge layui-bg-green">已完成</span>
+                        <span th:if="${record.status == 'canceled'}" class="layui-badge layui-bg-gray">已取消</span>
+                        <span th:if="${record.status == 'expired'}" class="layui-badge layui-bg-orange">已失效</span>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(reservePage.list)}">
+                    <td colspan="6" style="text-align: center;">暂无预约记录。</td>
                 </tr>
                 </tbody>
             </table>

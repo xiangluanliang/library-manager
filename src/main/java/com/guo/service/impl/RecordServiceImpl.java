@@ -2,7 +2,11 @@ package com.guo.service.impl;
 
 import com.guo.domain.*;
 import com.guo.domain.Vo.BorrowRecordVo;
-import com.guo.mapper.*;
+import com.guo.domain.Vo.ReservationVo;
+import com.guo.mapper.BookInventoryMapper;
+import com.guo.mapper.BorrowRecordMapper;
+import com.guo.mapper.ReservationMapper;
+import com.guo.mapper.ReturnRecordMapper;
 import com.guo.service.IRecordService;
 import com.guo.utils.page.Page;
 import org.springframework.stereotype.Service;
@@ -11,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -176,28 +182,119 @@ public class RecordServiceImpl implements IRecordService {
         try {
             // 1. 查找原始借阅记录
             BorrowRecord record = borrowRecordMapper.selectByPrimaryKey(borrowId);
-            if (record == null || "returned".equals(record.getStatus())) {
-                return false; // 记录不存在或已归还
-            }
+            if (record == null || "returned".equals(record.getStatus())) return false;
 
-            // 2. 更新借阅记录的状态为 "returned"
+            // 2. 更新借阅记录状态为 "returned"
             record.setStatus("returned");
             borrowRecordMapper.updateByPrimaryKeySelective(record);
 
-            // 3. 在还书记录表中插入一条新记录
+            // 3. 插入还书记录
             ReturnRecord returnRecord = new ReturnRecord();
             returnRecord.setBorrowId(borrowId);
             returnRecord.setReturnTime(new Date());
             returnRecordMapper.insert(returnRecord);
 
-            // 4. 将对应书籍的库存加1
-            bookInventoryMapper.incrementAvailableCopies(record.getBookId());
+            // 4. 库存加1（注意：这里暂时不加，因为马上可能被预约者借走）
+            // bookInventoryMapper.incrementAvailableCopies(record.getBookId());
+
+            // 5. 【核心逻辑】检查这本书是否有等待中的预约
+            Reservation nextReservation = reservationMapper.findNextPendingReservation(record.getBookId());
+
+            if (nextReservation != null) {
+                System.out.println("检测到预约，自动为用户 " + nextReservation.getUserId() + " 办理借阅...");
+                // 如果有预约，直接为该用户创建一笔新的借阅记录
+
+                // a. 创建新的借阅记录
+                BorrowRecord newBorrow = new BorrowRecord();
+                newBorrow.setUserId(nextReservation.getUserId());
+                newBorrow.setBookId(record.getBookId());
+                newBorrow.setBorrowTime(new Date());
+
+                // b. 计算新的应还日期
+                Calendar cal = Calendar.getInstance();
+                cal.add(Calendar.DAY_OF_MONTH, nextReservation.getBorrowDurationDays());
+                newBorrow.setDueTime(cal.getTime());
+
+                newBorrow.setStatus("borrowed");
+                borrowRecordMapper.insert(newBorrow);
+
+                // c. 更新预约状态为 "fulfilled" (已完成)
+                nextReservation.setStatus("fulfilled");
+                reservationMapper.updateByPrimaryKeySelective(nextReservation);
+
+                // d. 因为书马上又被借走了，所以库存实际上没有变化，不需要执行加1操作
+            } else {
+                // 如果没有预约，才真正地把库存加1
+                System.out.println("未检测到预约，库存+1。");
+                bookInventoryMapper.incrementAvailableCopies(record.getBookId());
+            }
 
             return true;
         } catch (Exception e) {
             e.printStackTrace();
-            // 抛出异常以触发事务回滚
             throw new RuntimeException("执行还书操作失败", e);
         }
+    }
+
+    /**
+     * 根据用户ID查找其所有的预约记录详情。
+     */
+    @Override
+    public List<ReservationVo> findReservationsByUserId(int userId) {
+        // 直接调用我们刚刚在Mapper中创建的新方法
+        return reservationMapper.findReservationsWithDetailsByUserId(userId);
+    }
+
+    /**
+     * 用户取消一个等待中的预约。
+     */
+    @Override
+    @Transactional // 更新操作，推荐使用事务
+    public boolean cancelReservation(int reservationId, int userId) {
+        // 1. 从数据库中获取该条预约记录的完整信息
+        Reservation reservation = reservationMapper.selectByPrimaryKey(reservationId);
+
+        // 2. 安全校验：
+        //    a. 检查预约是否存在
+        //    b. 检查这条预约记录是否属于当前操作的用户
+        //    c. 检查预约状态是否为'pending'（只有等待中的预约才能被取消）
+        if (reservation != null && reservation.getUserId().equals(userId) && "pending".equals(reservation.getStatus())) {
+
+            // 3. 将状态更新为'canceled'
+            Reservation reservationToUpdate = new Reservation();
+            reservationToUpdate.setReserveId(reservationId);
+            reservationToUpdate.setStatus("canceled");
+
+            // 4. 执行选择性更新，只更新status字段
+            int affectedRows = reservationMapper.updateByPrimaryKeySelective(reservationToUpdate);
+
+            return affectedRows > 0;
+        }
+
+        // 如果校验不通过，直接返回失败
+        System.out.println("取消预约失败：记录不存在，或用户无权操作，或状态不正确。");
+        return false;
+    }
+
+    @Override
+    public Page<ReservationVo> findAllReservationsByPage(int pageNum) {
+        Page<ReservationVo> page = new Page<>();
+        int pageSize = 10; // Assume 10 records per page
+        int offset = (pageNum - 1) * pageSize;
+
+        // 1. Call the mapper to get the paginated list of data
+        List<ReservationVo> records = reservationMapper.findAllWithDetailsByPage(offset, pageSize);
+        page.setList(records != null ? records : new ArrayList<>());
+
+        // 2. Call the mapper to get the total count of records
+        long totalCount = reservationMapper.countAllReservations();
+
+        // 3. Assemble the rest of the Page object's properties
+        page.setPageNum(pageNum);
+        page.setPageSize(pageSize);
+        int pageCount = (int) Math.ceil((double) totalCount / pageSize);
+        page.setPageCount(pageCount > 0 ? pageCount : 1);
+
+        return page;
     }
 }

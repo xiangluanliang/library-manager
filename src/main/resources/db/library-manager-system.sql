@@ -367,6 +367,7 @@ CREATE TABLE `reservation` (
                                `book_id` int(11) NOT NULL,
                                `reserve_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
                                `expire_time` datetime NOT NULL COMMENT '预约到期时间',
+                               `borrow_duration_days` int(11) NOT NULL DEFAULT 30,
                                `status` enum(
                                    'pending',
                                    'fulfilled',

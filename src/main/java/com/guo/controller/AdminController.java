@@ -4,6 +4,7 @@ import com.guo.domain.BookCategory;
 import com.guo.domain.User;
 import com.guo.domain.Vo.BookInfoVo;
 import com.guo.domain.Vo.BorrowRecordVo;
+import com.guo.domain.Vo.ReservationVo;
 import com.guo.service.*;
 import com.guo.utils.page.Page;
 import org.springframework.stereotype.Controller;
@@ -167,16 +168,28 @@ public class AdminController {
 
     // --- 记录管理 ---
 
+
     /**
      * 显示所有借阅记录
-     * @param pageNum 当前页码
+     * @param borrowPageNum 当前页码
+     * @param reservePageNum 当前页码
      * @param model Model对象
      * @return 显示所有借阅记录的视图
      */
     @GetMapping("/records/borrowing")
-    public String showAllBorrowingRecords(@RequestParam(value = "pageNum", defaultValue = "1") int pageNum, Model model) {
-        Page<BorrowRecordVo> recordPage = recordService.findAllRecordsByPage(pageNum);
-        model.addAttribute("page", recordPage);
+    public String showAllBorrowingRecords(@RequestParam(value = "borrowPageNum", defaultValue = "1") int borrowPageNum,
+                                          @RequestParam(value = "reservePageNum", defaultValue = "1") int reservePageNum,
+                                          Model model) {
+
+        // 1. 查询借阅记录的分页数据
+        Page<BorrowRecordVo> borrowPage = recordService.findAllRecordsByPage(borrowPageNum);
+        model.addAttribute("borrowPage", borrowPage);
+
+        // 2. 查询预约记录的分页数据
+        //    (假设IReservationService中也有一个分页查询所有预约的方法)
+        Page<ReservationVo> reservePage = recordService.findAllReservationsByPage(reservePageNum);
+        model.addAttribute("reservePage", reservePage);
+
         return "admin/allBorrowingBooksRecord";
     }
 

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>我的预约 - 图书管理系统</title>
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}">
+    <style>
+        .main-container { padding: 30px; }
+        .panel { padding: 30px; background-color: #fff; border-radius: 8px; }
+    </style>
+</head>
+<body class="layui-layout-body" style="background-color: #f2f2f2;">
+
+<div class="layui-layout layui-layout-admin">
+    <div th:include="common/header :: header"></div>
+    <div th:include="user/sidebar :: sidebar('borrowReservation')"></div>
+
+    <div class="layui-body main-container">
+        <div class="panel">
+            <h2 style="text-align: center; margin-bottom: 20px;">我的预约记录</h2>
+            <hr>
+            <table class="layui-table layui-table-hover">
+                <thead>
+                <tr>
+                    <th>书名</th>
+                    <th>预约时间</th>
+                    <th>预约失效时间</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="r : ${reservations}">
+                    <td th:text="${r.bookTitle}"></td>
+                    <td th:text="${#dates.format(r.reserveTime, 'yyyy-MM-dd HH:mm')}"></td>
+                    <td th:text="${#dates.format(r.expireTime, 'yyyy-MM-dd HH:mm')}"></td>
+                    <td>
+                        <span th:switch="${r.status}">
+                            <span th:case="'pending'" class="layui-badge layui-bg-blue">等待中</span>
+                            <span th:case="'fulfilled'" class="layui-badge layui-bg-green">已完成</span>
+                            <span th:case="'canceled'" class="layui-badge layui-bg-gray">已取消</span>
+                            <span th:case="'expired'" class="layui-badge layui-bg-orange">已失效</span>
+                        </span>
+                    </td>
+                    <td>
+                        <button th:if="${r.status == 'pending'}" class="layui-btn layui-btn-xs layui-btn-danger btn-cancel" th:data-id="${r.reserveId}">
+                            取消预约
+                        </button>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(reservations)}">
+                    <td colspan="5" style="text-align: center;">你还没有任何预约记录。</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div th:include="common/footer :: footer"></div>
+</div>
+
+<script th:src="@{/scripts/jquery.min.js}"></script>
+<script th:src="@{/layui/layui.all.js}"></script>
+<script>
+    layui.use('layer', function() {
+        var layer = layui.layer;
+        var $ = layui.jquery;
+
+        // 为“取消预约”按钮绑定AJAX事件
+        $('.btn-cancel').on('click', function() {
+            var reservationId = $(this).data('id');
+
+            layer.confirm('确定要取消这个预约吗？', {icon: 3, title:'取消确认'}, function(index){
+                $.ajax({
+                    url: '/user/reservations/cancel',
+                    type: 'POST',
+                    data: { reservationId: reservationId },
+                    success: function(res) {
+                        if (res === 'true') {
+                            layer.msg('取消成功！', {icon: 1, time: 1000}, function(){
+                                window.location.reload(); // 成功后刷新页面
+                            });
+                        } else {
+                            layer.msg('取消失败，可能预约已处理或失效。', {icon: 2});
+                        }
+                    },
+                    error: function() {
+                        layer.msg('请求失败，请检查网络。', {icon: 2});
+                    }
+                });
+                layer.close(index);
+            });
+        });
+    });
+</script>
+
+</body>
+</html>

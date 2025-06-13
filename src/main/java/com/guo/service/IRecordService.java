@@ -2,6 +2,7 @@ package com.guo.service;
 
 import com.guo.domain.User;
 import com.guo.domain.Vo.BorrowRecordVo;
+import com.guo.domain.Vo.ReservationVo;
 import com.guo.utils.page.Page;
 
 import java.util.Date;
@@ -49,5 +50,22 @@ public interface IRecordService {
     Page<BorrowRecordVo> findUnreturnedRecordsByPage(int pageNum);
 
     boolean executeReturn(int borrowId);
+
+    /**
+     * 根据用户ID查找其所有的预约记录详情。
+     * @param userId 用户ID
+     * @return 预约记录VO列表
+     */
+    List<ReservationVo> findReservationsByUserId(int userId);
+
+    /**
+     * 用户取消一个等待中的预约。
+     * @param reservationId 要取消的预约ID
+     * @param userId 操作者（当前登录用户）的ID，用于安全校验
+     * @return 取消成功返回true，失败返回false
+     */
+    boolean cancelReservation(int reservationId, int userId);
+
+    Page<ReservationVo> findAllReservationsByPage(int pageNum);
 
 }

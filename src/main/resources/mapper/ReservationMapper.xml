@@ -7,6 +7,7 @@
     <result column="book_id" jdbcType="INTEGER" property="bookId" />
     <result column="reserve_time" jdbcType="TIMESTAMP" property="reserveTime" />
     <result column="expire_time" jdbcType="TIMESTAMP" property="expireTime" />
+    <result column="borrow_duration_days" jdbcType="INTEGER" property="borrowDurationDays" />
     <result column="status" jdbcType="CHAR" property="status" />
   </resultMap>
   <sql id="Example_Where_Clause">
@@ -68,7 +69,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    reserve_id, user_id, book_id, reserve_time, expire_time, status
+    reserve_id, user_id, book_id, borrow_duration_days, reserve_time, expire_time, status
   </sql>
   <select id="selectByExample" parameterType="com.guo.domain.ReservationExample" resultMap="BaseResultMap">
     select
@@ -109,44 +110,23 @@
     values (#{userId,jdbcType=INTEGER}, #{bookId,jdbcType=INTEGER}, #{reserveTime,jdbcType=TIMESTAMP}, 
       #{expireTime,jdbcType=TIMESTAMP}, #{status,jdbcType=CHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.guo.domain.Reservation">
-    <selectKey keyProperty="reserveId" order="AFTER" resultType="java.lang.Integer">
-      SELECT LAST_INSERT_ID()
-    </selectKey>
+  <insert id="insertSelective" keyColumn="reserve_id" keyProperty="reserveId" parameterType="com.guo.domain.Reservation" useGeneratedKeys="true">
     insert into reservation
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="userId != null">
-        user_id,
-      </if>
-      <if test="bookId != null">
-        book_id,
-      </if>
-      <if test="reserveTime != null">
-        reserve_time,
-      </if>
-      <if test="expireTime != null">
-        expire_time,
-      </if>
-      <if test="status != null">
-        status,
-      </if>
+      <if test="userId != null"> user_id, </if>
+      <if test="bookId != null"> book_id, </if>
+      <if test="borrowDurationDays != null"> borrow_duration_days, </if>
+      <if test="reserveTime != null"> reserve_time, </if>
+      <if test="expireTime != null"> expire_time, </if>
+      <if test="status != null"> status, </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="userId != null">
-        #{userId,jdbcType=INTEGER},
-      </if>
-      <if test="bookId != null">
-        #{bookId,jdbcType=INTEGER},
-      </if>
-      <if test="reserveTime != null">
-        #{reserveTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="expireTime != null">
-        #{expireTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="status != null">
-        #{status,jdbcType=CHAR},
-      </if>
+      <if test="userId != null"> #{userId,jdbcType=INTEGER}, </if>
+      <if test="bookId != null"> #{bookId,jdbcType=INTEGER}, </if>
+      <if test="borrowDurationDays != null"> #{borrowDurationDays,jdbcType=INTEGER}, </if>
+      <if test="reserveTime != null"> #{reserveTime,jdbcType=TIMESTAMP}, </if>
+      <if test="expireTime != null"> #{expireTime,jdbcType=TIMESTAMP}, </if>
+      <if test="status != null"> #{status,jdbcType=CHAR}, </if>
     </trim>
   </insert>
   <select id="countByExample" parameterType="com.guo.domain.ReservationExample" resultType="java.lang.Long">
@@ -196,21 +176,12 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.guo.domain.Reservation">
     update reservation
     <set>
-      <if test="userId != null">
-        user_id = #{userId,jdbcType=INTEGER},
-      </if>
-      <if test="bookId != null">
-        book_id = #{bookId,jdbcType=INTEGER},
-      </if>
-      <if test="reserveTime != null">
-        reserve_time = #{reserveTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="expireTime != null">
-        expire_time = #{expireTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="status != null">
-        status = #{status,jdbcType=CHAR},
-      </if>
+      <if test="userId != null"> user_id = #{userId,jdbcType=INTEGER}, </if>
+      <if test="bookId != null"> book_id = #{bookId,jdbcType=INTEGER}, </if>
+      <if test="borrowDurationDays != null"> borrow_duration_days = #{borrowDurationDays,jdbcType=INTEGER}, </if>
+      <if test="reserveTime != null"> reserve_time = #{reserveTime,jdbcType=TIMESTAMP}, </if>
+      <if test="expireTime != null"> expire_time = #{expireTime,jdbcType=TIMESTAMP}, </if>
+      <if test="status != null"> status = #{status,jdbcType=CHAR}, </if>
     </set>
     where reserve_id = #{reserveId,jdbcType=INTEGER}
   </update>
@@ -223,4 +194,73 @@
       status = #{status,jdbcType=CHAR}
     where reserve_id = #{reserveId,jdbcType=INTEGER}
   </update>
+  <select id="findNextPendingReservation" parameterType="int" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM
+    reservation
+    WHERE
+    book_id = #{bookId} AND status = 'pending'
+    ORDER BY
+    reserve_time ASC
+    LIMIT 1
+  </select>
+
+  <select id="countPendingReservationForUser" resultType="long">
+    SELECT
+      count(*)
+    FROM
+      reservation
+    WHERE
+      user_id = #{userId} AND book_id = #{bookId} AND status = 'pending'
+  </select>
+
+  <resultMap id="ReservationVoResultMap" type="com.guo.domain.Vo.ReservationVo" extends="BaseResultMap">
+    <result column="book_title" jdbcType="VARCHAR" property="bookTitle" />
+  </resultMap>
+
+  <select id="findReservationsWithDetailsByUserId" parameterType="int" resultMap="ReservationVoResultMap">
+    SELECT
+      r.reserve_id,
+      r.user_id,
+      r.book_id,
+      r.borrow_duration_days,
+      r.reserve_time,
+      r.expire_time,
+      r.status,
+      b.title AS book_title
+    FROM
+      reservation r
+        LEFT JOIN
+      book_info b ON r.book_id = b.book_id
+    WHERE
+      r.user_id = #{userId}
+    ORDER BY
+      r.reserve_time DESC
+  </select>
+  <select id="findAllWithDetailsByPage" resultMap="ReservationVoResultMap">
+    SELECT
+      r.reserve_id,
+      r.user_id,
+      r.book_id,
+      r.borrow_duration_days,
+      r.reserve_time,
+      r.expire_time,
+      r.status,
+      u.user_name,
+      b.title AS book_title
+    FROM
+      reservation r
+        LEFT JOIN
+      user u ON r.user_id = u.user_id
+        LEFT JOIN
+      book_info b ON r.book_id = b.book_id
+    ORDER BY
+      r.reserve_time DESC
+      LIMIT #{offset}, #{pageSize}
+  </select>
+
+  <select id="countAllReservations" resultType="long">
+    SELECT COUNT(*) FROM reservation
+  </select>
 </mapper>

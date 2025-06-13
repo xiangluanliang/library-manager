@@ -1,10 +1,9 @@
 package com.guo.controller;
 
-import com.guo.domain.BookInfo;
-import com.guo.domain.BorrowRecord;
 import com.guo.domain.User;
 import com.guo.domain.Vo.BookInfoVo;
 import com.guo.domain.Vo.BorrowRecordVo;
+import com.guo.domain.Vo.ReservationVo;
 import com.guo.service.IBookService;
 import com.guo.service.IRecordService;
 import com.guo.service.IUserService;
@@ -14,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
@@ -329,5 +329,50 @@ public class UserController {
         }
 
         return "redirect:/books/search";
+    }
+
+    /**
+     * 【新增】显示当前用户的预约记录页面
+     * @param session 用于获取当前登录用户
+     * @param model   用于向视图传递数据
+     * @return “我的预约”页面的视图名
+     */
+    @GetMapping("/user/reservations") // 使用复数形式，更符合RESTful风格
+    public String showMyReservations(HttpSession session, Model model) {
+        // 1. 从session中获取当前登录的用户对象
+        User currentUser = (User) session.getAttribute("user");
+        if (currentUser == null) {
+            return "redirect:/"; // 用户未登录，重定向到首页
+        }
+
+        // 2. 调用ReservationService，根据用户ID查询其所有的预约记录详情
+        //    这个方法需要你在IReservationService和其实现类中创建
+        List<ReservationVo> reservationList = recordService.findReservationsByUserId(currentUser.getUserId());
+
+        // 3. 将查询到的记录列表放入Model中
+        //    在HTML中，你就可以通过 th:each="reservation : ${reservations}" 来遍历
+        model.addAttribute("reservations", reservationList);
+
+        // 4. 返回对应的视图名
+        return "user/myReservations";
+    }
+
+    /**
+     * 【新增】处理取消预约的AJAX请求
+     * @param reservationId 要取消的预约ID
+     * @param session       用于验证操作的合法性
+     * @return 操作结果字符串 "true" 或 "false"
+     */
+    @PostMapping("/user/reservations/cancel")
+    @ResponseBody
+    public String cancelReservation(@RequestParam("reservationId") int reservationId, HttpSession session) {
+        User currentUser = (User) session.getAttribute("user");
+        if (currentUser == null) {
+            return "false"; // 未登录，无法操作
+        }
+
+        // 调用Service层执行取消操作，Service内部会校验该预约是否属于当前用户
+        boolean success = recordService.cancelReservation(reservationId, currentUser.getUserId());
+        return success ? "true" : "false";
     }
 }
