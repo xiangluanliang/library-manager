@@ -22,7 +22,7 @@
                 <div class="panel">
                     <h3 style="text-align:center; margin-bottom: 20px;">新建类别</h3>
                     <hr>
-                    <form class="layui-form" method="post" th:action="@{/admin/categories/add}">
+                    <form class="layui-form" id="addCategoryForm">
                         <div class="layui-form-item">
                             <label class="layui-form-label">类别名称</label>
                             <div class="layui-input-block">
@@ -31,7 +31,7 @@
                         </div>
                         <div class="layui-form-item">
                             <div class="layui-input-block">
-                                <button class="layui-btn" lay-submit>立即添加</button>
+                                <button class="layui-btn" lay-submit lay-filter="addCategoryBtn">立即添加</button>
                                 <button type="reset" class="layui-btn layui-btn-primary">重置</button>
                             </div>
                         </div>
@@ -56,7 +56,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr th:each="category : ${page.list}">
+                        <tr th:each="category : ${categoryTree}">
                             <td th:text="${category.categoryId}"></td>
                             <td th:text="${category.categoryName}"></td>
                             <td>
@@ -65,21 +65,12 @@
                                 </button>
                             </td>
                         </tr>
-                        <tr th:if="${page == null or #lists.isEmpty(page.list)}">
+                        <tr th:if="${#lists.isEmpty(categoryTree)}">
                             <td colspan="3" style="text-align: center;">暂无任何分类。</td>
                         </tr>
                         </tbody>
                     </table>
 
-                    <div id="pagination" style="text-align: center;" th:if="${page != null and page.pageCount > 1}">
-                        <a class="layui-btn layui-btn-sm" th:href="@{/admin/categories(pageNum=1)}">首页</a>
-                        <a class="layui-btn layui-btn-sm" th:if="${page.pageNum > 1}" th:href="@{/admin/categories(pageNum=${page.pageNum - 1})}">上一页</a>
-                        <a class="layui-btn layui-btn-sm layui-btn-disabled" th:if="${page.pageNum <= 1}">上一页</a>
-                        <span style="padding: 0 15px;">[[${page.pageNum}]] / [[${page.pageCount}]]</span>
-                        <a class="layui-btn layui-btn-sm" th:if="${page.pageNum < page.pageCount}" th:href="@{/admin/categories(pageNum=${page.pageNum + 1})}">下一页</a>
-                        <a class="layui-btn layui-btn-sm layui-btn-disabled" th:if="${page.pageNum >= page.pageCount}">下一页</a>
-                        <a class="layui-btn layui-btn-sm" th:href="@{/admin/categories(pageNum=${page.pageCount})}">尾页</a>
-                    </div>
                 </div>
             </div>
         </div>
@@ -95,31 +86,47 @@
         var layer = layui.layer;
         var form = layui.form;
 
-        // 【新增】为删除按钮绑定异步删除事件
+        form.on('submit(addCategoryBtn)', function (data) {
+            $.ajax({
+                url: '/books/categories/admin/add',
+                type: 'POST',
+                data: data.field,
+                success: function (result) {
+                    if (result === 'true') {
+                        layer.msg('添加成功！', {icon: 1, time: 1000}, function () {
+                            window.location.reload();
+                        });
+                    } else {
+                        layer.msg('添加失败！可能是分类名已存在。', {icon: 2});
+                    }
+                },
+                error: function () { layer.msg('请求失败，请检查网络。', {icon: 2}); }
+            });
+            return false;
+        });
+
         $('.btn-delete').on('click', function () {
             var categoryId = $(this).data('id');
             var categoryName = $(this).data('name');
 
-            layer.confirm('确定要删除分类 "' + categoryName + '" 吗？如果该分类下还有图书，将无法删除。', {
+            layer.confirm('确定要删除分类 "' + categoryName + '" 吗？', {
                 title: '删除确认',
                 icon: 3
             }, function (index) {
                 $.ajax({
-                    url: '/admin/categories/delete', // 调用删除接口
+                    url: '/books/categories/admin/delete',
                     type: 'POST',
                     data: { categoryId: categoryId },
                     success: function (result) {
                         if (result === 'true') {
                             layer.msg('删除成功！', {icon: 1, time: 1000}, function () {
-                                window.location.reload(); // 刷新页面
+                                window.location.reload();
                             });
                         } else {
                             layer.msg('删除失败！请确保该分类下已无任何图书。', {icon: 2});
                         }
                     },
-                    error: function () {
-                        layer.msg('请求失败，请检查网络。', {icon: 2});
-                    }
+                    error: function () { layer.msg('请求失败，请检查网络。', {icon: 2}); }
                 });
                 layer.close(index);
             });

@@ -3,6 +3,7 @@ package com.guo.controller;
 import com.guo.domain.BookCategory;
 import com.guo.domain.User;
 import com.guo.domain.Vo.BookInfoVo;
+import com.guo.domain.Vo.BorrowRecordVo;
 import com.guo.service.*;
 import com.guo.utils.page.Page;
 import org.springframework.stereotype.Controller;
@@ -159,7 +160,6 @@ public class AdminController {
      */
     @GetMapping("/categories")
     public String showCategoryPage(Model model) {
-        // TODO: 在IBookCategoryService中实现查询所有分类的逻辑
          List<BookCategory> categoryTree = bookCategoryService.findAll();
          model.addAttribute("categoryTree", categoryTree);
         return "admin/addCategory";
@@ -175,10 +175,25 @@ public class AdminController {
      */
     @GetMapping("/records/borrowing")
     public String showAllBorrowingRecords(@RequestParam(value = "pageNum", defaultValue = "1") int pageNum, Model model) {
-        // TODO: 在新的IRecordService中实现分页查询所有借阅记录的逻辑
-        // Page<BorrowRecordVo> recordPage = recordService.findAllBorrowRecordsByPage(pageNum);
-        // model.addAttribute("page", recordPage);
+        Page<BorrowRecordVo> recordPage = recordService.findAllRecordsByPage(pageNum);
+        model.addAttribute("page", recordPage);
         return "admin/allBorrowingBooksRecord";
+    }
+
+    // 为“待还处理”页面提供数据
+    @GetMapping("/records/return")
+    public String showReturnProcessingPage(@RequestParam(value = "pageNum", defaultValue = "1") int pageNum, Model model) {
+        Page<BorrowRecordVo> recordPage = recordService.findUnreturnedRecordsByPage(pageNum);
+        model.addAttribute("page", recordPage);
+        return "admin/returnProcessing"; // 返回新页面
+    }
+
+    // 处理“回收”按钮的AJAX请求
+    @PostMapping("/records/return/execute")
+    @ResponseBody
+    public String executeReturnBook(@RequestParam("borrowId") int borrowId) {
+        boolean success = recordService.executeReturn(borrowId);
+        return success ? "true" : "false";
     }
 
 
@@ -191,6 +206,7 @@ public class AdminController {
     @GetMapping("/profile")
     public String showAdminProfilePage(Model model, HttpSession session) {
         User currentUser = (User) session.getAttribute("user");
+        System.out.println(currentUser.getUserName());
         // 从数据库重新获取最新的用户信息，防止session中数据过时
         User freshUser = userService.findUserById(currentUser.getUserId());
         model.addAttribute("profileUser", freshUser);
@@ -210,13 +226,11 @@ public class AdminController {
         User currentAdmin = (User) session.getAttribute("user");
         adminToUpdate.setUserId(currentAdmin.getUserId());
 
-        // TODO: 调用IUserService中的更新方法
-        // boolean success = userService.updateUserProfile(adminToUpdate);
-        // if(success) {
-        //    session.setAttribute("user", userService.findUserById(currentAdmin.getUserId()));
-        //    return "true";
-        // }
-        // return "false";
-        return "true"; // 暂时返回true
+         boolean success = userService.updateUserProfile(adminToUpdate);
+         if(success) {
+            session.setAttribute("user", userService.findUserById(currentAdmin.getUserId()));
+            return "true";
+         }
+         return "false";
     }
 }

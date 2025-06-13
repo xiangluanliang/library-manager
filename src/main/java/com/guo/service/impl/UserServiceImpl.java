@@ -152,25 +152,6 @@ public class UserServiceImpl implements IUserService {
 
         return true;
     }
-    /**
-     * 用户还书（未来需要实现的业务）
-     * @param bookId 图书ID
-     * @param userId 用户ID
-     * @return 归还成功返回true，否则返回false
-     */
-    @Override
-    @Transactional
-    public boolean returnBook(int bookId, int userId) {
-        // TODO: 实现完整的还书业务逻辑
-        // 1. 查找该用户对应的该图书的、状态为'borrowed'或'overdue'的借阅记录 (查询borrow_record表)
-        // 2. 如果找到记录，则更新该条记录的状态为'returned'
-        // 3. 在return_record表中插入一条新的归还记录
-        // 4. 更新book_inventory表的available_copies数量（加1）
-        // 5. 如果有逾期，可能还需要处理罚金逻辑（查询overdue_record表）
-        // 6. 如果以上任一步失败，则事务回滚，还书失败
-        System.out.println("用户 " + userId + " 正在尝试归还图书 " + bookId + "（逻辑待实现）");
-        return false; // 暂时返回false
-    }
 
         /**
      * 验证用户密码

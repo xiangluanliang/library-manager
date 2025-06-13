@@ -54,14 +54,7 @@ public interface IUserService{
      * @return 借阅成功返回true，失败返回false。
      */
     boolean borrowBook(int bookId, int userId);
-
-    /**
-     * 用户归还一本书。
-     * @param bookId 准备归还的图书ID
-     * @param userId 执行操作的用户ID
-     * @return 归还成功返回true，失败返回false。
-     */
-    boolean returnBook(int bookId, int userId);
+    
 
 
     // ====================================================================

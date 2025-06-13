@@ -2,8 +2,7 @@ package com.guo.service.impl;
 
 import com.guo.domain.*;
 import com.guo.domain.Vo.BorrowRecordVo;
-import com.guo.mapper.BorrowRecordMapper;
-import com.guo.mapper.ReservationMapper;
+import com.guo.mapper.*;
 import com.guo.service.IRecordService;
 import com.guo.utils.page.Page;
 import org.springframework.stereotype.Service;
@@ -26,6 +25,12 @@ public class RecordServiceImpl implements IRecordService {
 
     @Resource
     private ReservationMapper reservationMapper;
+    @Resource
+    private ReturnRecordMapper returnRecordMapper;
+
+    @Resource
+    private BookInventoryMapper bookInventoryMapper;
+
 
     /**
      * 分页查询所有借阅记录。
@@ -47,7 +52,7 @@ public class RecordServiceImpl implements IRecordService {
         // 3. 设置分页对象
         Page<BorrowRecordVo> page = new Page<>();
         page.setList(records);
-        //TODO:page.setTotalCount(totalCount);没有这个方法，这行代码的作用是将查询到的所有借阅记录的总数赋值给分页对象 Page 的 totalCount 字段。
+        page.setPageCount((int) Math.ceil((double) totalCount / pageSize));
         page.setPageNum(pageNum);
         page.setPageSize(pageSize);
 
@@ -146,5 +151,53 @@ public class RecordServiceImpl implements IRecordService {
         // 插入数据库
         int affectedRows = reservationMapper.insertSelective(reservation);
         return affectedRows > 0;
+    }
+
+
+    @Override
+    public Page<BorrowRecordVo> findUnreturnedRecordsByPage(int pageNum) {
+        Page<BorrowRecordVo> page = new Page<>();
+        int pageSize = 10;
+        int offset = (pageNum - 1) * pageSize;
+        // 调用新的Mapper方法
+        List<BorrowRecordVo> records = borrowRecordMapper.findUnreturnedWithDetailsByPage(offset, pageSize);
+        long totalCount = borrowRecordMapper.countUnreturned();
+
+        page.setList(records);
+        page.setPageCount((int) Math.ceil((double) totalCount / pageSize));
+        page.setPageNum(pageNum);
+        page.setPageSize(pageSize);
+        return page;
+    }
+
+    @Override
+    @Transactional
+    public boolean executeReturn(int borrowId) {
+        try {
+            // 1. 查找原始借阅记录
+            BorrowRecord record = borrowRecordMapper.selectByPrimaryKey(borrowId);
+            if (record == null || "returned".equals(record.getStatus())) {
+                return false; // 记录不存在或已归还
+            }
+
+            // 2. 更新借阅记录的状态为 "returned"
+            record.setStatus("returned");
+            borrowRecordMapper.updateByPrimaryKeySelective(record);
+
+            // 3. 在还书记录表中插入一条新记录
+            ReturnRecord returnRecord = new ReturnRecord();
+            returnRecord.setBorrowId(borrowId);
+            returnRecord.setReturnTime(new Date());
+            returnRecordMapper.insert(returnRecord);
+
+            // 4. 将对应书籍的库存加1
+            bookInventoryMapper.incrementAvailableCopies(record.getBookId());
+
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            // 抛出异常以触发事务回滚
+            throw new RuntimeException("执行还书操作失败", e);
+        }
     }
 }

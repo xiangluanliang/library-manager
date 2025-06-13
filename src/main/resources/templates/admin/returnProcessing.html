@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>待还处理 - 管理员</title>
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}"/>
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div th:include="common/header :: header"></div>
+    <div th:include="admin/sidebar :: sidebar('borrowed')"></div>
+    <div class="layui-body" style="padding: 15px;">
+        <div class="panel">
+            <h2 style="text-align:center; margin-bottom: 20px;">待还记录处理</h2>
+            <hr>
+            <table class="layui-table">
+                <thead>
+                <tr>
+                    <th>借阅ID</th><th>书名</th><th>借阅人</th><th>借阅日期</th><th>应还日期</th><th>状态</th><th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="record : ${page.list}">
+                    <td th:text="${record.borrowId}"></td>
+                    <td th:text="${record.bookTitle}"></td>
+                    <td th:text="${record.userName}"></td>
+                    <td th:text="${#dates.format(record.borrowTime, 'yyyy-MM-dd')}"></td>
+                    <td th:text="${#dates.format(record.dueTime, 'yyyy-MM-dd')}"></td>
+                    <td>
+                        <span th:if="${record.status == 'borrowed'}" class="layui-badge layui-bg-blue">借阅中</span>
+                        <span th:if="${record.status == 'overdue'}" class="layui-badge layui-bg-orange">已逾期</span>
+                    </td>
+                    <td>
+                        <button class="layui-btn layui-btn-xs layui-btn-normal btn-return" th:data-id="${record.borrowId}">确认回收</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script th:src="@{/scripts/jquery.min.js}"></script>
+<script th:src="@{/layui/layui.all.js}"></script>
+<script>
+    // 【新增】为回收按钮绑定AJAX事件
+    layui.use('layer', function() {
+        var layer = layui.layer;
+        $('.btn-return').on('click', function() {
+            var borrowId = $(this).data('id');
+            layer.confirm('确认已收到用户归还的这本书吗？', {icon: 3, title:'还书确认'}, function(index){
+                $.ajax({
+                    url: '/admin/records/return/execute',
+                    type: 'POST',
+                    data: { borrowId: borrowId },
+                    success: function(res) {
+                        if (res === 'true') {
+                            layer.msg('操作成功！', {icon: 1, time: 1000}, function(){ window.location.reload(); });
+                        } else {
+                            layer.msg('操作失败！', {icon: 2});
+                        }
+                    },
+                    error: function() { layer.msg('请求失败！', {icon: 2}); }
+                });
+                layer.close(index);
+            });
+        });
+    });
+</script>
+</body>
+</html>

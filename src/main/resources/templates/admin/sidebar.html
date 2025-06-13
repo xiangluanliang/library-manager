@@ -57,10 +57,10 @@
               <a href="/admin/books/add">录入新书</a>
             </dd>
             <dd th:class="${activePage == 'bookCategory'} ? 'layui-this'">
-              <a href="/admin/categories">新建类别</a>
+              <a href="/admin/categories">类别管理</a>
             </dd>
             <dd th:class="${activePage == 'bookShow'} ? 'layui-this'">
-              <a href="/books/search?source=admin">查询书籍</a>
+              <a href="/books/search?source=admin">书籍目录</a>
             </dd>
           </dl>
         </li>
@@ -70,7 +70,7 @@
           <a href="javascript:;"><i class="layui-icon">&#xe770;</i> 用户管理</a>
           <dl class="layui-nav-child">
             <dd th:class="${activePage == 'userShow'} ? 'layui-this'">
-              <a href="/admin/users">查询用户</a>
+              <a href="/admin/users">用户名单</a>
             </dd>
             <dd th:class="${activePage == 'userAdd'} ? 'layui-this'">
               <a href="/admin/users/add">新增用户</a>
@@ -80,8 +80,11 @@
 
         <li class="layui-nav-item"
             th:classappend="${activePage.startsWith('borrow')} ? ' layui-nav-itemed'">
-          <a href="javascript:;"><i class="layui-icon">&#xe705;</i> 借阅信息</a>
+          <a href="javascript:;"><i class="layui-icon">&#xe705;</i> 记录管理</a>
           <dl class="layui-nav-child">
+            <dd th:class="${activePage == 'borrowed'} ? 'layui-this'">
+              <a th:href="@{/admin/records/return}">待还处理</a>
+            </dd>
             <dd th:class="${activePage == 'borrowAll'} ? 'layui-this'">
               <a href="/admin/records/borrowing">所有记录</a>
             </dd>

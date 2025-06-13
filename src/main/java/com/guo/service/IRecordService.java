@@ -45,4 +45,9 @@ public interface IRecordService {
      */
     boolean executeBorrow(int bookId, User currentUser, Date dueDate);
 
+
+    Page<BorrowRecordVo> findUnreturnedRecordsByPage(int pageNum);
+
+    boolean executeReturn(int borrowId);
+
 }

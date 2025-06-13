@@ -233,4 +233,11 @@
     </set>
     where book_id = #{bookId,jdbcType=INTEGER}
   </update>
+  <update id="incrementAvailableCopies" parameterType="int">
+    UPDATE book_inventory
+    SET
+      available_copies = available_copies + 1
+    WHERE
+      book_id = #{bookId}
+  </update>
 </mapper>

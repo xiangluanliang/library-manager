@@ -64,4 +64,10 @@ public interface BorrowRecordMapper {
      * @return 受影响的行数（成功则为1，失败则为0）
      */
     int decrementAvailableCopies(int bookId);
+
+    List<BorrowRecordVo> findUnreturnedWithDetailsByPage(int offset, int pageSize);
+
+    long countUnreturned();
+
+
 }

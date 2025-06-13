@@ -42,4 +42,7 @@ public interface BookInventoryMapper {
      * @return 受影响的行数
      */
     int updateByBookIdSelective(BookInventory record);
+
+
+    int incrementAvailableCopies(@Param("bookId") int bookId);
 }

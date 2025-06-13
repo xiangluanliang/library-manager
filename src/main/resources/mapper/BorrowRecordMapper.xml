@@ -105,7 +105,7 @@
       br.due_time,
       br.status,
       u.user_name,
-      bi.title
+      bi.title AS book_title
     FROM
       borrow_record br
         LEFT JOIN
@@ -305,4 +305,21 @@
       book_id = #{bookId}
       AND available_copies > 0
   </update>
+  <select id="findUnreturnedWithDetailsByPage" resultMap="BorrowRecordVoResultMap">
+    SELECT
+      br.*, u.user_name, bi.title AS book_title, rr.return_time
+    FROM
+      borrow_record br
+        LEFT JOIN user u ON br.user_id = u.user_id
+        LEFT JOIN book_info bi ON br.book_id = bi.book_id
+        LEFT JOIN return_record rr ON br.borrow_id = rr.borrow_id
+    WHERE
+      br.status IN ('borrowed', 'overdue')
+    ORDER BY br.due_time ASC
+      LIMIT #{offset}, #{pageSize}
+  </select>
+
+  <select id="countUnreturned" resultType="long">
+    SELECT count(*) FROM borrow_record WHERE status IN ('borrowed', 'overdue')
+  </select>
 </mapper>
